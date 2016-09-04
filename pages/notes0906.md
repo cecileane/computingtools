@@ -9,7 +9,8 @@ nametags and survey:
 * your name
 * your graduate program and year
 * why do you want to take this course
-  (required / needs tools x and y for my research / need tools on my CV to apply for job x or y / ...)
+  (needs tools x and y for my research / need tools on my CV to apply for job x and y /
+  required / recommended by x / ...)
 * any questions for me
 
 
@@ -87,42 +88,42 @@ Your laptop is going to be your slave and best friend. Invest in it!
 
 from [Wilson et al. 2014](http://journals.plos.org/plosbiology/article?id=10.1371/journal.pbio.1001745):
 
-1. Write programs for people, not computers.
-    a. A program should not require its readers to hold more than a handful of facts in memory at once.
-    b. Make names consistent, distinctive, and meaningful.
-    c. Make code style and formatting consistent.
-2. Let the computer do the work.
-    a. Make the computer repeat tasks.
-    b. Save recent commands in a file for re-use.
-    c. Use a build tool to automate workflows.
-3. Make incremental changes.
-    a. Work in small steps with frequent feedback and course correction.
-    b. Use a version control system.
-    c. Put everything that has been created manually in version control.
-4. Don't repeat yourself (or others).
-    a. Every piece of data must have a single authoritative representation in the system.
-    b. Modularize code rather than copying and pasting.
-    c. Re-use code instead of rewriting it.
-5. Plan for mistakes.
-    a. Add assertions to programs to check their operation.
-    b. Use an off-the-shelf unit testing library.
-    c. Turn bugs into test cases.
-    d. Use a symbolic debugger. [interactive program inspector]
-6. Optimize software only after it works correctly.
-    a. Use a profiler to identify bottlenecks.
-    b. Write code in the highest-level language possible.
-7. Document design and purpose, not mechanics.
-    a. Document interfaces and reasons, not implementations.
-    b. Refactor code in preference to explaining how it works.
-    c. Embed the documentation for a piece of software in that software. [plus documentation generator]
-8. Collaborate.
-    a. Use pre-merge code reviews.
-    b. Use pair programming when bringing someone new up to speed and when tackling particularly tricky problems.
-    c. Use an issue tracking tool.
+1. Write programs for people, not computers
+    - A program should not require its readers to hold more than a handful of facts in memory at once
+    - Make names consistent, distinctive, and meaningful
+    - Make code style and formatting consistent
+2. Let the computer do the work
+    - Make the computer repeat tasks
+    - Save recent commands in a file for re-use
+    - Use a build tool to automate workflows
+3. Make incremental changes
+    - Work in small steps with frequent feedback and course correction
+    - Use a version control system
+    - Put everything that has been created manually in version control
+4. Don't repeat yourself (or others)
+    - Every piece of data must have a single authoritative representation in the system
+    - Modularize code rather than copying and pasting
+    - Re-use code instead of rewriting it
+5. Plan for mistakes
+    - Add assertions to programs to check their operation
+    - Use an off-the-shelf unit testing library
+    - Turn bugs into test cases
+    - Use a symbolic debugger [interactive program inspector]
+6. Optimize software only after it works correctly
+    - Use a profiler to identify bottlenecks
+    - Write code in the highest-level language possible
+7. Document design and purpose, not mechanics
+    - Document interfaces and reasons, not implementations
+    - Refactor code in preference to explaining how it works
+    - Embed the documentation for a piece of software in that software [plus documentation generator]
+8. Collaborate
+    - Use pre-merge code reviews
+    - Use pair programming when bringing someone new up to speed and when tackling particularly tricky problems
+    - Use an issue tracking tool
 
 Python example (from [Bioinformatics Data Skills](http://shop.oreilly.com/product/0636920030157.do))
 
-```Python
+```python
 EPS = 0.00001 # a small number to use when comparing floating-point values
 
 def add(x, y):
