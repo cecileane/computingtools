@@ -25,6 +25,7 @@ highlighter: rouge
 kramdown:
   input: GFM
   hard_wrap: false
+  syntax_highlighter: rouge
 
 # All Jekyll-Bootstrap specific configurations are namespaced into this hash
 #
