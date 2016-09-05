@@ -49,7 +49,7 @@ tools and topics
 - the shell: power of command lines to interact with a machine
 - version control and collaboration: git and [GitHub](https://github.com)
 - [best practices for scientific computing](http://journals.plos.org/plosbiology/article?id=10.1371/journal.pbio.1001745)
-- scripting: Perl and Python
+- scripting: Bash and Python primarily
 - learning a programming language: [Julia](http://julialang.org)
 
 hardware requirements
@@ -77,8 +77,11 @@ Students with a Windows machine have the following options:
 - not recommended and not supported: install bash and a set of Unix commands on your machine.
   This will likely involve some trial-error and frustration, but see
   [here](http://uw-madison-aci.github.io/2016-06-08-uwmadison/#setup) to install
-  the bash shell with git, and Python with Anaconda.  
-  Alternatively, use [cygwin](http://www.cygwin.com)
+  the bash shell with git, and Python with Anaconda.
+  Also install [Rtools](https://github.com/stan-dev/rstan/wiki/Install-Rtools-for-Windows),
+  which will provide key utilities like GNU "make" and "gcc".
+
+    Alternatively, use [cygwin](http://www.cygwin.com)
   or install a desktop virtual machine like
   [Virtual Box VM](https://www.virtualbox.org/wiki/Downloads),
   but these don't work with git as well.
@@ -90,9 +93,8 @@ assessments
 Because one cannot master computational tools without practice or without
 trouble-shooting errors, the course will be primarily project-based.
 All the topics above will be taught in the context of case studies in biology.
-Both midterm and final projects will be collaborative in groups of 3 or 4.
+The final project will be collaborative in groups of 3 or 4.
 
-- [20%] participation in class (formative assessment)
-- [20%] homework exercises
-- [30%] midterm project
-- [30%] final project
+- [20%] participation (in lecture, in-class group work, peer reviews, etc.)
+- [40%] homework exercises
+- [40%] final project

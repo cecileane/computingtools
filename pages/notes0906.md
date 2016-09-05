@@ -1,16 +1,20 @@
 ---
 layout: page
-title: 9/8 notes
+title: 9/6 notes
 description: notes, links, example code and exercises
 ---
+[next](notes0908.html)
 
-nametags and survey:
+---
+
+### survey:
 
 * your name
 * your graduate program and year
 * why do you want to take this course
   (needs tools x and y for my research / need tools on my CV to apply for job x and y /
   required / recommended by x / ...)
+* are you auditing, and if so, do you want to join a group for class projects
 * any questions for me
 
 
@@ -24,6 +28,8 @@ nametags and survey:
     * reproducibly: by oneself or by others
     * collaboratively: sharing work with a version control system
 - ability to adapt to change.
+
+details on [topic coverage](schedule.html#overview-of-topic-coverage)
 
 #### what the course is *not* about:
 
@@ -57,6 +63,7 @@ nametags and survey:
 
 ## expectations
 
+- bring your laptop to class every time
 - very active participation. no practice = no learning.
     * ask questions
     * try things out, spend time debugging, again and again
@@ -67,7 +74,7 @@ nametags and survey:
 
 Your laptop is going to be your slave and best friend. Invest in it!
 
-[Hardware requirement](pages/coursedescription.html#hardware-requirements): Linux or Mac.
+[Hardware requirement](coursedescription.html#hardware-requirements): Linux or Mac.
 
 - need to use the bash shell (this tool won't change!)
 - need admin access: to have the freedom to install new software or tweak which compiler
@@ -188,6 +195,30 @@ List of estimated networks for all runs:
 -------
 ```
 
+each analysis also had a log file, e.g.
+`TestResults/log files/timetest1_snaq.log`
+<!-- https://github.com/frupaul/Test-for-SNAQ-by-Reduced-Data-Sample/-->
+which starts like this:
+
+```
+optimization of topology, BL and inheritance probabilities using:
+ hmax = 1,
+ tolerance parameters: ftolRel=1.0e-5, ftolAbs=1.0e-6,
+                       xtolAbs=0.0001, xtolRel=0.001.
+ max number of failed proposals = 10, multiplier M = 10000.
+rootname for files: temtest1_snaq
+BEGIN: 10 runs on starting tree (VFI114,VchN16961,(((GCDA,GBAG):2.21807813924953,((Dpa2511,((ECH3937,Ddi453):0.7566916943696904,(Dic586,DzeEch1591):0.39164053319430225):1.5074406866092167):1.747431936458303,((BsaATCC15712,BspEniD312):0.33456697190000023,(((PectoSCC3193,Pwa43316):0.9524725883536365,SCRI1043):0.42667192097520906,(PcaPC1,(PcaPCC21,WPP1692):1.1448942055036169):0.09303348762204595):2.1191171552256183):1.2281031678188656):1.3399415660611986):1.3119963967965944,(Pae1,PstDC3000):3.560015689796989):2.518148088969418);
+
+main seed 30312
+seed: 30312 for run 1
+Sat Jun 11 16:35:20 2016
+...
+---------------------
+seed: 1440 for run 2
+Sat Jun 11 17:47:11 2016
+...
+```
+
 and then combine information from each pair of files into a summary table like this:
 
 ```
@@ -227,20 +258,27 @@ The shell is an incredibly powerful tool:
 
 deletes all large alignment files `aligned-reads_1` to `aligned-reads_1000`
 in old temporary directory `tmp-data`:
-```
-> rm -rf tmp-data/aligned-reads*
+
+```shell
+$ rm -rf tmp-data/aligned-reads*
 ```
 
+`rm` is to remove files & directories.
+`-r` will do it recursively (enter each directory within each directory).
+`-f` will "force" removal without asking you confirmation for each individual file.
+`*` in the shell will match anything.
+
 deletes your entire current directory (ouch!):
-```
-> rm -rf tmp-data/aligned-reads *
+
+```shell
+$ rm -rf tmp-data/aligned-reads *
 rm: tmp-data/aligned-reads: No such file or directory
 ```
 
 watch shell script example from Gary Bernhardt's
 [talk](http://confreaks.tv/videos/cascadiaruby2011-the-unix-chainsaw) at 10:18-12:14
 
-#### modularity
+### modularity
 
     This is the Unix philosophy: Write programs that do one thing and do it well.
     Write programs to work together. Write programs to handle text streams,
@@ -257,7 +295,7 @@ Advantages to modularity:
 * choose appropriate tool for each step, e.g. C++ -> Python -> R
 * modules possible reusable for other tasks later on
 
-#### text streams
+### text streams
 
 to process a stream of data rather than holding it all in memory.
 
@@ -278,25 +316,41 @@ cat tb1-protein.fasta tga1-protein.fasta
 cat tb1-protein.fasta tga1-protein.fasta > zea-proteins.fasta
 ls -lrt
 ```
-`-l`: in list format  
-`-r`: in reverse order  
+`-l`: in list format;
+`-r`: in reverse order;
 `-t`: ordered by time
 
-data processed without storing huge amounts of data in our computers' memory: very efficient
+Streams process data without storing huge amounts in our computers' memory: very efficient
 
 ## let's get started: the bash shell
 
 ```shell
-echo $SHELL
+$ echo $SHELL
+/bin/bash
 ```
-quick count: shell versus terminal? absolute versus relative path? `grep`?
 
-We will follow the
-[software carpentry introduction](http://swcarpentry.github.io/shell-novice/).
-Click on 'setup' to download the data.
+## homework
 
-## next time:
+- you may want to start the software carpentry introduction.
+  If so, **note** all your questions.
+  We will go through them in the [next](notes0908.html) class period.
+- create a [github](https://github.com) account,
+  pick a "professional" name (like your real name)
+- make sure you have a good text editor, install one if not (see below).
 
-Text editor
-Typing skills
-Set up and manage an analysis project
+## text editor
+
+- [TextWrangler](http://www.barebones.com/products/textwrangler/download.html) or
+  [Atom](https://atom.io) for Mac users
+- [gedit](https://wiki.gnome.org/Apps/Gedit),
+  [Emacs](https://www.gnu.org/software/emacs/) or
+  [Atom](https://atom.io) for Linux users
+- [nano](https://en.wikipedia.org/wiki/GNU_nano) for a command-line editor,
+  useful when working on a remote computer cluster, for instance.
+
+In the terminal, type `which emacs` (or `which nano` or `which edit`)
+to see if you have them installed,
+`emacs --version` to see the version.
+
+---
+[next](notes0908.html)

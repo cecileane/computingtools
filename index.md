@@ -15,14 +15,19 @@ description: course website, UW-Madison, Statistics 679
 
 Course Material
 
-- [Schedule](pages/schedule.html)
+- [Schedule and Notes](pages/schedule.html)
 - [Data](pages/data.html)
+- classlist: <stat679-1-f16@lists.wisc.edu>
+- [learn@uw](https://coursedashboard.learnuw.wisc.edu/) for grades
 
 Resources
 
+- [linuxcommand.org](http://linuxcommand.org/) and [bashguide](http://mywiki.wooledge.org/BashGuide)
 - [Software Carpentry](http://software-carpentry.org/lessons/) and last session
   at [UW-Madison](http://uw-madison-aci.github.io/2016-06-08-uwmadison/)
-- [Reproducible Research](https://github.com/kbroman/Talk_ReproRes) by Karl Broman
+- Reproducible Research by Karl Broman:
+  [talk](https://github.com/kbroman/Talk_ReproRes) and
+  [course](http://kbroman.org/Tools4RR)
 - Karl Broman's excellent [short tutorials](http://kbroman.org/pages/tutorials.html) on
   git/github, make, perl, and more.
 - [Bioinformatics Data Skills](http://shop.oreilly.com/product/0636920030157.do) by Vince Buffalo
