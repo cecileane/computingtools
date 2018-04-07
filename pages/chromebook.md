@@ -4,7 +4,10 @@ title: Running Linux on a Chromebook
 description: chromebook, hardware requirements
 ---
 
-I got the Acer Chromebook 14 ($300) because it has an Intel chip, 32GB disk space and 4GB RAM.
+disclaimer: these notes are from 2016.
+
+I got the Acer Chromebook 14 ($300 at the time)
+because it has an Intel chip, 32GB disk space and 4GB RAM.
 
 install Linux
 -------------
@@ -104,15 +107,19 @@ So I ran this to get them: ```sudo apt-get -f install``` and then again
 ```sudo apt-get install curl```
 
   Another of `atom`'s dependency is `Node.js`:
-    curl -sL https://deb.nodesource.com/setup_4.x | sudo -E bash -
+
+      curl -sL https://deb.nodesource.com/setup_4.x | sudo -E bash -
+
 then
-    sudo apt-get install -y nodejs
+
+      sudo apt-get install -y nodejs
+
 Then I followed the build instructions to build `atom`, in a new directory that I called
 `apps`: 
 
-    mkdir apps
-    cd apps
-    git clone https://github.com/atom/atom
+      mkdir apps
+      cd apps
+      git clone https://github.com/atom/atom
 
   etc. But the build failed in the end.
 

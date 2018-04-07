@@ -49,8 +49,8 @@ tools and topics
 - the shell: power of command lines to interact with a machine
 - version control and collaboration: git and [GitHub](https://github.com)
 - [best practices for scientific computing](http://journals.plos.org/plosbiology/article?id=10.1371/journal.pbio.1001745)
-- scripting: Bash and Python primarily
-- learning a programming language: [Julia](http://julialang.org)
+- scripting: Bash and Python primarily,
+  basics of [Julia](http://julialang.org)
 
 hardware requirements
 ---------------------
@@ -67,17 +67,23 @@ Students with a Windows machine have the following options:
 
 - buy an Intel-based [chromebook](http://www.google.com/chromebook/) running
   [Linux](https://github.com/dnschneid/crouton).
-  They start around $150-$200, so you can consider that this in lieu of a textbook.
-  I started experimenting with a chromebook, see my updates [here](chromebook.html).
+  They start around $180, so you can consider that this in lieu of a textbook.
+  I started experimenting with a chromebook, see my notes [here](chromebook.html).
 
 - connect to a remote Linux server in Statistics. An important downside is the
   lack of admin (super-user) permission, which may prevent the upgrade or installation of
   necessary software.
 
-- not recommended and not supported: install bash and a set of Unix commands on your machine.
+- if you have a 64-bit machine running Windows 10, you *may* try the
+  "Windows Subsystem for Linux", which offers the Bash shell.
+  But all Linux features are not available, so this option is
+  not recommended and will not be supported during the course.
+
+- not recommended and not supported:
+  install bash and a set of Unix commands on your machine.
   This will likely involve some trial-error and frustration, but see
-  [here](http://uw-madison-aci.github.io/2016-06-08-uwmadison/#setup) to install
-  the bash shell with git, and Python with Anaconda.
+  [here](https://uw-madison-aci.github.io/2018-01-10-uwmadison-swc/#setup)
+  to install the bash shell with git, and Python with Anaconda.
   Also install [Rtools](https://github.com/stan-dev/rstan/wiki/Install-Rtools-for-Windows),
   which will provide key utilities like GNU "make" and "gcc".
 
@@ -95,6 +101,6 @@ trouble-shooting errors, the course will be primarily project-based.
 All the topics above will be taught in the context of case studies in biology.
 The final project will be collaborative in groups of 3 or 4.
 
-- [20%] participation (in lecture, in-class group work, peer reviews, etc.)
+- [20%] participation: in lecture, in-class group work, peer reviews, etc.
 - [40%] homework exercises
 - [40%] final project

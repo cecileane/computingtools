@@ -15,16 +15,18 @@ description: course website, UW-Madison, Statistics 679
 
 Course Material
 
-- [Schedule and Notes](pages/schedule.html)
-- [Data](pages/data.html)
-- classlist: <stat679-1-f16@lists.wisc.edu>
-- [learn@uw](https://coursedashboard.learnuw.wisc.edu/) for grades
+- [schedule and notes](pages/schedule.html)
+- [data](pages/data.html)
+- classlist: <stat679-1-f18@lists.wisc.edu> will be used once, and then
+  all communication will be via canvas announcements / discussions
+- [canvas](https://canvas.wisc.edu/courses/) for grades
 
 Resources
 
 - [linuxcommand.org](http://linuxcommand.org/) and [bashguide](http://mywiki.wooledge.org/BashGuide)
 - [Software Carpentry](http://software-carpentry.org/lessons/) and last session
-  at [UW-Madison](http://uw-madison-aci.github.io/2016-06-08-uwmadison/)
+  at [UW-Madison](https://uw-madison-aci.github.io/2018-01-10-uwmadison-swc/)
+  <!-- http://uw-madison-aci.github.io/2016-06-08-uwmadison/ -->
 - Reproducible Research by Karl Broman:
   [talk](https://github.com/kbroman/Talk_ReproRes) and
   [course](http://kbroman.org/Tools4RR)
