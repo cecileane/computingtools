@@ -1,22 +1,18 @@
 ---
 layout: page
-title: 12/15 notes
+title: job scheduling with slurm
 description: course notes
 ---
-[previous](notes1208.html)
+[previous](notes1209.html)
 
 ---
 
-## job scheduling with slurm
-
-by Mike Cammilleri
-
 [slurm](https://slurm.schedmd.com): simple linux utility for resource management.  
-[Instructions](http://www.stat.wisc.edu/services/hpc-cluster)
-for our Stat department system.
+[Instructions](http://www.stat.wisc.edu/services/hpc-cluster1/about)
+for our Stat department system (check the menu on the right).
 
 - head node: `lunchbox.stat.wisc.edu`
-- 6 `marzano` machines, each with 24 CPUs * 2 threads = 48 cores each.
+- 13 compute nodes (called `marzano` etc.), each with 24 CPUs * 2 threads = 48 cores each.
 
 The CHTC on campus uses slurm too for their high performance cluster.
 
@@ -28,13 +24,13 @@ file systems:
   bad for running things on the cluster!
 
 - NFS (Network File System) in `/workspace`: do stuff here.
-  All notes machines in the cluster have access to this directory.
+  All machines in the cluster have access to this directory.
   Software (R, julia, python) installed in `/workspace/software`,
   install your own packages in `/workspace/<username>/<dir>` and
   set permissions with `chmod`
 
 
-### simple test example
+## simple test example
 
 This slurm script, in file `echo_submit.sh`,
 runs a pair of `echo` commands 10 times:
@@ -65,6 +61,11 @@ The first `echo` command produces standard output written to
 a file `screen/echo_?.log`.  
 The second `echo` produces an output file `output/echo_?.out`.
 
+Slurm is asked to capture the screen output to `screen/echo_*.log`,
+so we need to create the `screen/` directory prior to running the script.
+Also, for the second `echo` command to run successfully, we need to create
+the directory `output/` prior to running the slurm script.
+
 `#SBATCH -t 1`: expected time, in minutes.
 default is 4 days, which puts the submission at the bottom of the queue.  
 `#SBATCH -n 3`: requests 3 cores; the 9 (super short) tasks
@@ -78,7 +79,7 @@ sbatch echo_submit.sh
 
 ## main slurm commands
 
-`sbatch` submits your batch script to the scheduler (example earlier)
+`sbatch` submits a batch script to the scheduler (example earlier)
 
 `sinfo` displays current "partitions" and idle, busy, down, up states.  
 partition = group of computers
@@ -91,10 +92,15 @@ partition = group of computers
 ```shell
 $ sinfo
 PARTITION AVAIL  TIMELIMIT  NODES  STATE NODELIST
-long         up 14-00:00:0      4   idle marzano[01-04]
-short*       up 4-00:00:00      2   idle marzano[05-06]
-darwin       up   infinite      9   idle darwin[00-06,12-13]
+debug*       up    2:00:00      1   idle marzano01
+short        up 2-00:00:00      1    mix marzano03
+short        up 2-00:00:00      2  alloc marzano[02,04]
+long         up 8-00:00:00      8    mix marzano[05-09,11-13]
+long         up 8-00:00:00      1  alloc marzano10
+hipri        up 5-00:00:00      9    mix marzano[03,05-09,11-13]
+hipri        up 5-00:00:00      3  alloc marzano[02,04,10]
 ```
+<!-- darwin       up   infinite      9   idle darwin[00-06,12-13] -->
 
 `squeue` displays jobs currently running or queued
 
@@ -115,7 +121,7 @@ $ scancel 7347     # to kill the submitted something
 $ squeue # the job should be gone: no output here
 ```
 
-`sacct`: (account) displays your jobs, cores used, run states,
+`sacct`: (account) displays the user's jobs, cores used, run states,
 even after the jobs have finished
 
 Other notes:
@@ -127,7 +133,7 @@ Other notes:
 the appropriate number of cores with `#SBATCH -n xxx`
 - in the slurm script, it can handy to redefine your home with
   `export HOME=/workspace/ane` (adapt the user name).
-- to user your preferred editor (Atom?) on the remote server:
+- to use your preferred editor (e.g. VS Code) on the remote server:
   try sshfs (links for [Ubuntu](https://help.ubuntu.com/community/SSHFS)
   or [Mac](http://stuff-things.net/2015/05/20/fuse-and-sshfs-on-os-x/))
 
@@ -147,167 +153,167 @@ On `srun`:
 
 
 
-### example to run a bunch of julia scripts
+## example to run a bunch of julia scripts
 
 General guideline:
 **start simple** with 1 task, 1 process, 1 job. expand from there.
 
 Below: we want to run a julia script
-[`onesnaq.jl`](../assets/julia/onesnaq.jl)
-240 times, each time with a different set of parameters.
+[`onesimulation.jl`](../assets/julia/onesimulation.jl)
+many times (e.g. 240 times or 2400 times),
+each time with a different set of parameters.
+
+The main section of the julia script does this:
+
+```julia
+# parse the integer argument
+@assert length(ARGS)>0 "need 1 parameters: arrayID"
+arrayID = parse(Int, ARGS[1])
+# ...
+rep, samplesize, nrarecat, mu = arrayID_to_parameters(arrayID, Nreps)
+# ...
+# run the simulation. use arrayID as seed: will be different for each simulation
+pearson, qlog, p_pearson, p_qlog = onesimulation(samplesize, nrarecat, mu, arrayID)
+
+# save the result in tiny csv-formatted file
+# (later, all these files will be concatenated with "cat")
+outputfile = joinpath(resultdirectory, "simulation_" * @sprintf("%04d", arrayID) * ".csv")
+open(outputfile, "w") do g
+  write(g, "$arrayID,$rep,$samplesize,$nrarecat,$mu,") # input
+  write(g, "$pearson,$qlog,$p_pearson,$p_qlog\n")      # output
+end
+```
+
 To start simple:
 
 1. We check that the julia script runs without error once,
-  with 1 set of parameters, without using slurm, and on a
-  slightly modified script to make it run fast.
+   with 1 set of parameters, without using slurm.
+   If necessary, run a slightly modified script to make it run fast.
 2. To check that the slurm submission works:
-  the script `onesnaq.jl` is modified so that it does *not* run the main
-  time-consuming command, but only prints this command as a string.
-  Writing this string to the intended output file also checks that
-  output files are writable with correct path etc.
-3. Finally: we modify the script `onesnaq.jl` to its final version
-  to run its main time-consuming command, not just print it.
+   the slurm (or "submit") script or the main julia script is modified so
+   that it does *not* run the time-consuming command,
+   but only prints this command as a string.
+   Writing this string to the intended output file also checks that
+   output files are writable with correct path etc.
+3. Finally: modify the submit script or the julia script to its final version
+   to run the main time-consuming command, not just print it.
 
 The example below shows steps 1 and 2.
-Save the following script in file `onesnaq_submit.sh`:
+Save the following script in file [`simulations_submit.sh`](../assets/julia/simulations_submit.sh):
 
 ```shell
 #!/bin/bash
 #SBATCH --mail-type=ALL
 #SBATCH --mail-user=cecile.ane@wisc.edu
-#SBATCH -o snaq/onesnaq_%a.log
-#SBATCH -J onesnaq
-#SBATCH --array=0-239
-#SBATCH -p long
+#SBATCH -o simresults/simulation_%a.log
+#SBATCH -J sims
+#SBATCH --array=1-240
+#SBATCH -p short
+
+# warning: onesimulation.jl (below) and the -o option (above) assume that
+# simresults/ has already been created
 
 # use Julia packages in /worskpace/, not defaults in ~/.julia/ (on AFS):
-export JULIA_PKGDIR="/workspace/ane/.julia"
+export JULIA_DEPOT_PATH="/workspace/ane/.julia"
 
-# launch Julia script, using Julia in /workspace/ again, with full paths:
 echo "slurm task ID = $SLURM_ARRAY_TASK_ID"
-/workspace/software/julia-0.5.0/julia /workspace/ane/timetest/onesnaq.jl 1 30 $SLURM_ARRAY_TASK_ID
+
+# launch Julia script, using Julia in /workspace/ and with full paths:
+/workspace/software/julia-1.0.1/bin/julia /workspace/ane/st679simulations/onesimulation.jl $SLURM_ARRAY_TASK_ID 20
 ```
 
-It will run the julia script [`onesnaq.jl`](../assets/julia/onesnaq.jl)
-(last line) 240 times (from `#SBATCH --array=0-239`).  
-The julia script gets 3 arguments: 1, 30, and the value of
-`SLURM_ARRAY_TASK_ID` (0,1,...,239).
-Julia will use this last integer argument to set an array of parameter values.
+It will run the julia script [`onesimulation.jl`](../assets/julia/onesimulation.jl)
+(last line) 240 times (from `#SBATCH --array=1-240`).  
+The julia script gets 2 arguments: the value of `SLURM_ARRAY_TASK_ID` (1,...,240)
+and the number of replicates per parameter combination.
+Julia will use the first integer argument to set an array of parameter values.
 
 **preparation**
 
-- copy your input file, julia file, submit file etc:
+- copy the input file, julia file, submit file etc to the slurm server:
 
 ```shell
-scp onesnaq* lunchbox.stat.wisc.edu:/workspace/ane/timetest/
+scp onesimulation.jl simulations_submit.sh username@lunchbox.stat.wisc.edu:/workspace/ane/st679simulations/
 ```
 
-- `ssh` to lunchbox and go to your folder in `workspace`.
+- `ssh` to lunchbox and go to your folder in `/workspace/<username>/xxx`.
+- make sure all the packages are installed in the non-default "depot", that is,
+  in `/workspace/`: do `export JULIA_DEPOT_PATH="/workspace/ane/.julia"`,
+  launch `/workspace/software/julia-1.0.1/bin/julia` and within julia:
+  `using Pkg; Pkg.add("Distributions")` then `using Distributions`
+  to precompile the package, and simply quit julia.
+
 - step1 : check that the julia script is working by running it once,
-  with the 3<sup>rd</sup> argument set to 0 for instance:
+  with arguments that make it run fast:
 
 ```shell
 export JULIA_PKGDIR="/workspace/ane/.julia"
-/workspace/software/julia-0.5.0/julia onesnaq.jl 1 30 0
+/workspace/software/julia-1.0.1/bin/julia onesimulation.jl 14 2
 ```
 
-**run slurm** (step 2)
+**run slurm quickly** (step 2)
 
 - run the slurm script for a few trials only, to run the julia script
-  3 times only (not 240 times yet):
+  2 times only (not 240 times yet) by editing to `#SBATCH --array=1-2`
+  and make slurm `echo` the julia command, *not* run it. After editing
+  the slutm submit script, run it:
 
 ```shell
-sbatch onesnaq_submit.sh --array=0-2
+sbatch simulations_submit.sh
 squeue
 ```
 
+- if all goes well, edit the submit script again to execute the julia
+  command, not just echo it, then run again; but still for 3 trials only.
 - monitor the jobs for these first few trials, predict the running time
   for the full 240 julia runs.
-- run the full array of 240 jobs:
+
+**run slurm** for the full simulation (step 3)
+
+edit the script again to `#SBATCH --array=1-240` and
+run the full array of 240 jobs, and sumit like in step 2 above:
 
 ```shell
-sbatch onesnaq_submit.sh
+sbatch simulations_submit.sh
 squeue
+wc simresults/*.csv # to check progress in output files
+wc simresults/*.log # to check for any error message by slurm
 ```
 
-for step 3: we would just need to edit the Julia script
-to make it run the main command not just print it, then submit
-the final julia script to slurm like in step 2 above.
+### converting a slurm array ID to a combination of parameters
 
-### converting the array task ID
+The julia script above converts the slurm array ID (between 1-240) to a combination
+of parameters. This is done in the function `arrayID_to_parameters`
+(check it out!). The gist is to use a `CartesianIndex` to map linear integers
+to coordinates (or indices) in a matrix or in a higher dimentional array.
 
-single integer: but can be used to set parameter values
-within your Julia/Python/R script.  
-example: run this Julia command with various values
-for `Nfail`, and for tolerance parameters `ftolAbs` etc.
-to stop the likelihood optimization:
-
-```julia
-snaq!(startingNet, tableCF, hmax=h, Nfail=NF,
-      ftolAbs=FTA, ftolRel=FTR, xtolRel=XTR, xtolAbs=XTA,
-      liktolAbs=LTA, runs=runs, seed=s, filename=rootname)
-```
-
-We want to have these parameters take these values:
+Below is a simple example (with 1 less dimension than in the simulation file)
+with 3 parameters of interest, taking between 2 or 3 values each, for a
+total of 2\*2\*3 = 12 combinations. A linear ID for parameter combinations
+would run from 1 to 12. But what does combination 5 correspond to, for example?
 
 ```julia
-lFTA = [0.000001, 0.00001, 0.0001, 0.001, 0.01]
-lNF    = [100, 75, 50, 25]
-lRatio = [1, 100, 10000]   # controld LTA: Ratio=LTA/FTA
-lXTR   = [0.001,    0.01]
-lXTA   = [0.000001, 0.001]
-```
+samplesizes = [30, 1000] # parameters of interest
+nrarecats = [1, 2]
+mus = [0.1, 1., 2.]
 
-It makes for a total of 5\*4\*3\*2\*2 = 240 combinations of parameter values,
-so 240 calls to the `snaq!` function.
-We can convert an integer in 0,...,239 into exactly one combination
-with the `comb` function below.
-To explain its algorithm,
-imagine that we only had the first 2 parameters to vary: FTA and NF,
-with a total of 5\*4 = 20 combinations. The algorithm would map:
-
-- the first 5 integers 0,1,2,3,4 to NF=100
-- the next 5 integers 5,6,7,8,9 to NF=75
-- ...
-- the last 5 integers 15,16,17,18,19 to NF=25.
-
-Within each set of 5 integers, the first would get FTA=0.000001, ...,
-and the 5<sup>th</sup> would get FTA=0.01.
-To code this, we do the integer division of the input integer `i` by 5
-(number of FTA values) using `d,r = fldmod(i,5)`
-
-- the remainder `r` is in 0,...,4 and gives us the index for the FTA value
-- the quotient `d` is in 0,...,3 (i<20) and gives us the index for the NF value.
-
-In general, we would again divide `d` by 4 (number of values for NF), and so on.
-
-```julia
-nparams = 5
-nlevels = [length(lFTA),length(lNF),length(lRatio),length(lXTR),length(lXTA)]
-"""
-comb(index of parameter combination)
-
-Take an integer as input, return a tuple of parameter values.
-External objects are used: nparams, nlevels, and lFTA etc.
-The integer input should be between 0 and 239, or
-between 0 and the total # combinations -1 in general.
-index 0 -> first values of all parameters
-index 239 -> last values of all parameters
-"""
-function comb(combID)
-  paramID = Vector{Int}(nparams)
-  d = combID
-  for par in 1:nparams
-    d,r = fldmod(d, nlevels[par]) # combid = d * nlevels + r
-    paramID[par] = r+1 # indexing in parameter list starts at 1, not 0
-  end
-  println("parameter levels: ",paramID)
-  return lFTA[paramID[1]], lNF[paramID[2]], lRatio[paramID[3]], lXTR[paramID[4]], lXTA[paramID[5]]
+I = CartesianIndices( (2,2,3) )
+for i in 1:6
+ @show I[i]
 end
+A = reshape(12:-1:1, (2,2,3))
+for i in 1:6
+  @show A[I[i]]
+end
+A[5]
+A[1,1,2]
+I[5]
+I[5].I
 
-FTA, NF, Ratio, XTR, XTA = comb(id)
-LTA = FTA*Ratio;
+samplesizes[I[5].I[1]] # combination 5, parameter 1
+nrarecats[I[5].I[2]]   # combination 5, parameter 2
+mus[I[5].I[3]]         # combination 5, parameter 3
 ```
 
 ---
-[previous](notes1208.html)
+[previous](notes1209.html)

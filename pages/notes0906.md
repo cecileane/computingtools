@@ -1,9 +1,9 @@
 ---
 layout: page
-title: 9/6 notes
+title: course intro
 description: notes, links, example code and exercises
 ---
-[next](notes0908.html)
+[next](notes0906-bestpractices.html)
 
 ---
 
@@ -20,6 +20,8 @@ description: notes, links, example code and exercises
 
 ## what the course is about
 
+details on [topic coverage](topics.html)
+
 #### learning objectives:
 
 - learn to do computations
@@ -27,9 +29,7 @@ description: notes, links, example code and exercises
     * automatically: using scripts to repeat tasks (and avoid manual errors)
     * reproducibly: by oneself or by others
     * collaboratively: sharing work with a version control system
-- ability to adapt to change.
-
-details on [topic coverage](schedule.html#overview-of-topic-coverage)
+- demonstrate ability to adapt to change
 
 #### what the course is *not* about:
 
@@ -59,7 +59,8 @@ details on [topic coverage](schedule.html#overview-of-topic-coverage)
       - code
 
 - talk on [reproducible research](https://github.com/kbroman/Talk_ReproRes) by Karl Broman.
-  Slide #12 is so true.
+  Slide #12 is so true:
+  [You mostly collaborate with yourself, and me-from-two-months-ago never responds to email."](https://twitter.com/kcranstn/status/370914072511791104)
 
 ## expectations
 
@@ -69,6 +70,10 @@ details on [topic coverage](schedule.html#overview-of-topic-coverage)
     * try things out, spend time debugging, again and again
     * help others with their practical roadblocks
 - your learning objectives? expectations?
+
+## assignments and grading
+
+see course [description](coursedescription.html#assessments)
 
 ## logistics
 
@@ -81,7 +86,7 @@ Your laptop is going to be your slave and best friend. Invest in it!
   or Python version (etc.) you system uses.
 - pick an old laptop in your parents' or friends' basement, presumably old and slow.
   Wipe its OS and install some LTS (long term support) release of Ubuntu.
-  Version [16.04.1](http://www.ubuntu.com/download/desktop) requires
+  Version [18.04.1](http://www.ubuntu.com/download/desktop) requires
     * 2 GHz dual core processor
     * 2 GB system memory
     * 25 GB of free hard drive space
@@ -91,69 +96,13 @@ Your laptop is going to be your slave and best friend. Invest in it!
     but choose a light-weight environment (how the desktop looks like and what tools are
   preinstalled) for lower requirements (avoid Unity and Gnome).
 
-## best practices
-
-from [Wilson et al. 2014](http://journals.plos.org/plosbiology/article?id=10.1371/journal.pbio.1001745):
-
-1. Write programs for people, not computers
-    - A program should not require its readers to hold more than a handful of facts in memory at once
-    - Make names consistent, distinctive, and meaningful
-    - Make code style and formatting consistent
-2. Let the computer do the work
-    - Make the computer repeat tasks
-    - Save recent commands in a file for re-use
-    - Use a build tool to automate workflows
-3. Make incremental changes
-    - Work in small steps with frequent feedback and course correction
-    - Use a version control system
-    - Put everything that has been created manually in version control
-4. Don't repeat yourself (or others)
-    - Every piece of data must have a single authoritative representation in the system
-    - Modularize code rather than copying and pasting
-    - Re-use code instead of rewriting it
-5. Plan for mistakes
-    - Add assertions to programs to check their operation
-    - Use an off-the-shelf unit testing library
-    - Turn bugs into test cases
-    - Use a symbolic debugger [interactive program inspector]
-6. Optimize software only after it works correctly
-    - Use a profiler to identify bottlenecks
-    - Write code in the highest-level language possible
-7. Document design and purpose, not mechanics
-    - Document interfaces and reasons, not implementations
-    - Refactor code in preference to explaining how it works
-    - Embed the documentation for a piece of software in that software [plus documentation generator]
-8. Collaborate
-    - Use pre-merge code reviews
-    - Use pair programming when bringing someone new up to speed and when tackling particularly tricky problems
-    - Use an issue tracking tool
-
-Python example (from [Bioinformatics Data Skills](http://shop.oreilly.com/product/0636920030157.do))
-
-```python
-EPS = 0.00001 # a small number to use when comparing floating-point values
-
-def add(x, y):
-    """Add two things together."""
-    return x + y
-
-def test_add():
-    """Test that the add() function works for a variety of numeric types."""
-    assert(add(2, 3) == 5)
-    assert(add(-2, 3) == 1)
-    assert(add(-1, -1) == -2)
-    assert(abs(add(2.4, 0.1) - 2.5) < EPS)
-```
-
-Which best practices are shown here?
-
 ## motivating example: data manipulation
 
-From my own work, just last week
-[here](https://github.com/frupaul/Test-for-SNAQ-by-Reduced-Data-Sample/):
-need to extract various pieces of information from
-[result files](https://github.com/frupaul/Test-for-SNAQ-by-Reduced-Data-Sample/tree/master/TestResults)
-such as this result file `TestResults/out files/net1_snaq.out`:
+Data  manipulation / data cleaning from one of my student's research:
+<!-- https://github.com/frupaul/Test-for-SNAQ-by-Reduced-Data-Sample/ -->
+extract various pieces of information from various files
+<!-- https://github.com/frupaul/Test-for-SNAQ-by-Reduced-Data-Sample/tree/master/timeTestResults -->
+such as this "out" file `TestResults/out files/net1_snaq.out`:
 
 ```
 (ECH3937,((Dic586,DzeEch1591):0.39334426457355115,((((BspEniD312,BsaATCC15712):0.313091357476667,((PcaPC1,(PcaPCC21,WPP1692):1.1457045168568845):0.08725049544490777,(SCRI1043,((PectoSCC3193,Pwa43316):0.858533139429174,#H20:1.2894166676352883::0.022562841930608746):0.09559815984571758):0.4382834061748707):2.5022258780461746):1.4087025649051665,(((GCDA,GBAG):2.2215234026418282,((Pae1,PstDC3000):3.5532626847828177,(VFI114,VchN16961):2.514723407664476):1.3114662776537342):0.41902892411289594)#H20:1.1087410295507665::0.9774371580693912):1.7110632803748822,Dpa2511):1.506271879442207):0.7569747895374156,Ddi453); -Ploglik = 3440.8180547004067
@@ -174,7 +123,7 @@ List of estimated networks for all runs:
 -------
 ```
 
-or as this other result file `TestResults/out files/timetest1_snaq.out`:
+or this other "out" file `TestResults/out files/Timetest1_snaq.out`:
 
 ```
 (ECH3937,Ddi453,((Dic586,DzeEch1591):0.39151452022020755,(Dpa2511,(((BsaATCC15712,BspEniD312):0.31165264651122426,((PcaPC1,(PcaPCC21,WPP1692):1.144025891196133):0.0876790364165445,(((PectoSCC3193,Pwa43316):0.9529701731377197,SCRI1043):0.0632647451890301,#H20:8.251812487790279e-7::0.023694403794416646):0.37365021164620515):2.5071408957817876):1.4168426104118295,(((GCDA,GBAG):2.21912632231476,((Pae1,PstDC3000):3.565361799130726,(VFI114,VchN16961):2.518277890640175):1.3136037135425378):0.42011126229987183)#H20:1.1184877095177088::0.9763055962055833):1.7090991861969702):1.5074073219469928):0.7563231659538783); -Ploglik = 3443.958828187268
@@ -195,10 +144,12 @@ List of estimated networks for all runs:
 -------
 ```
 
-each analysis also had a log file, e.g.
-`TestResults/log files/timetest1_snaq.log`
+Each file was the result of one analysis.
+Hundreds of analyses were made.
+Each analysis also had a "log" file, e.g.
+`TestResults/log files/Timetest1_snaq.log`
 <!-- https://github.com/frupaul/Test-for-SNAQ-by-Reduced-Data-Sample/-->
-which starts like this:
+starting like this:
 
 ```
 optimization of topology, BL and inheritance probabilities using:
@@ -219,11 +170,12 @@ Sat Jun 11 17:47:11 2016
 ...
 ```
 
-and then combine information from each pair of files into a summary table like this:
+Task: extract key information from each file, then combine the
+data points from each pair of files into a summary table like this:
 
 ```
-,Hmax,Number of Runs,Nfails,ftolAbs,ftolRel,xtolAbs,xtolRel,The First Seed,Best Seed,Number of Log-lik under 3460,Number of Log-lik under 3450,Number of Log-lik under 3440,Log-lik,Best Run Time,Total CPU Time
-Original Try,1,10,100,0.000001,0.00001,0.0001,0.001,3322,3322,1,1,0,3440.8181,16000,150000
+analysis,hmax,number of runs,Nfails,ftolAbs,ftolRel,xtolAbs,xtolRel,first seed,best seed,number of loglik under 3460,number of loglik under 3450,number of loglik under 3440,-loglik,best run time,total CPU time
+net1_snaq,1,10,100,0.000001,0.00001,0.0001,0.001,3322,3322,1,1,0,3440.8181,16000,150000
 Best Starting Tree,0,1,100,0.000001,0.00001,0.0001,0.001,66077,66077,0,0,0,3917.9621,10085,10085
 Best Model,1,10,100,0.000001,0.00001,0.0001,0.001,36252,14351,4,4,2,3439.7454,12012,88579.31
 Timetest1,1,10,10,0.000001,0.00001,0.0001,0.001,30312,81138,2,1,0,3443.9588,1598,16688.02
@@ -241,104 +193,13 @@ Timetest12,1,10,50,0.000001,0.00001,0.01,0.1,39416,74437,4,0,0,3452.1753,1790,18
 Timetest13,1,10,100,0.00001,0.00001,0.01,0.1,38112,82736,3,1,1,3439.7857,3131,31456.99
 ```
 
-Can you notice one "best practice" not followed in this project?
-
-## introduction to the Unix shell
-
-GUI (graphical user interface): easy but not reproducible.  
-CLI (command line interface) or REPL (read-evaluate-print loop): steep learning curve but
-reproducible and powerful.  
-The shell is an incredibly powerful tool:
-
-* Gary Bernhardt:
- [Unix is like a chainsaw](http://confreaks.tv/videos/cascadiaruby2011-the-unix-chainsaw).
- Can kill trees, and people.
- The Unix shell can do great things, but power comes with danger: it's unsafe!
-* example:
-
-deletes all large alignment files `aligned-reads_1` to `aligned-reads_1000`
-in old temporary directory `tmp-data`:
-
-```shell
-$ rm -rf tmp-data/aligned-reads*
-```
-
-`rm` is to remove files & directories.
-`-r` will do it recursively (enter each directory within each directory).
-`-f` will "force" removal without asking you confirmation for each individual file.
-`*` in the shell will match anything.
-
-deletes your entire current directory (ouch!):
-
-```shell
-$ rm -rf tmp-data/aligned-reads *
-rm: tmp-data/aligned-reads: No such file or directory
-```
-
-watch shell script example from Gary Bernhardt's
-[talk](http://confreaks.tv/videos/cascadiaruby2011-the-unix-chainsaw) at 10:18-12:14
-
-### modularity
-
-    This is the Unix philosophy: Write programs that do one thing and do it well.
-    Write programs to work together. Write programs to handle text streams,
-    because that is a universal interface.
-    —- Doug McIlory
-
-* modularity
-* pipes: STDIN --> myprogram --> STDOUT
-
-Advantages to modularity:
-
-* easier to spot errors, and fix them
-* experiments with alternative choices at one step in the pipeline
-* choose appropriate tool for each step, e.g. C++ -> Python -> R
-* modules possible reusable for other tasks later on
-
-### text streams
-
-to process a stream of data rather than holding it all in memory.
-
-Example: concatenate two data files.
-Open both in editor, copy one and paste into the other?
-
-* may not have enough memory
-* manual operation: error-prone and not reproducible.
-
-Instead: print the files's content to *standard output* stream and
-redirect this stream from our terminal to the file we wish to save the combined results to.
-
-```
-cd bds-files/chapter-03-remedial-unix/
-cat tb1-protein.fasta
-cat tga1-protein.fasta
-cat tb1-protein.fasta tga1-protein.fasta
-cat tb1-protein.fasta tga1-protein.fasta > zea-proteins.fasta
-ls -lrt
-```
-`-l`: in list format;
-`-r`: in reverse order;
-`-t`: ordered by time
-
-Streams process data without storing huge amounts in our computers' memory: very efficient
-
-## let's get started: the bash shell
-
-```shell
-$ echo $SHELL
-/bin/bash
-```
-
-## homework
-
-- you may want to start the software carpentry introduction.
-  If so, **note** all your questions.
-  We will go through them in the [next](notes0908.html) class period.
-- create a [github](https://github.com) account,
-  pick a "professional" name (like your real name)
-- make sure you have a good text editor, install one if not (see below).
-
 ## text editor
+
+I highly recommend [VS Code](https://code.visualstudio.com),
+for all platforms. To launch VS Code from the command line via `code`,
+Mac users will first need to follow these
+[instructions](https://code.visualstudio.com/docs/setup/mac).
+Alternatives:
 
 - [TextWrangler](http://www.barebones.com/products/textwrangler/download.html) or
   [Atom](https://atom.io) for Mac users
@@ -348,9 +209,10 @@ $ echo $SHELL
 - [nano](https://en.wikipedia.org/wiki/GNU_nano) for a command-line editor,
   useful when working on a remote computer cluster, for instance.
 
-In the terminal, type `which emacs` (or `which nano` or `which edit`)
+In the terminal, type `which code`, or
+`which emacs` (or `which nano` or `which edit`)
 to see if you have them installed,
 `emacs --version` to see the version.
 
 ---
-[next](notes0908.html)
+[next](notes0906-bestpractices.html)

@@ -1,29 +1,20 @@
 ---
 layout: page
-title: 10/4 notes
+title: more shell tools, sed
 description: course notes
 ---
-[previous](notes0929.html) & [next](notes1006.html)
+[previous](notes0929.html) &
+[next](notes1006.html)
 
 ---
-
-## homework
-
-- do ["tracking a species"](http://swcarpentry.github.io/shell-novice/07-find/#tracking-a-species)
-from the software carpentry workshop: combines `grep`, `cut`, pipes
-and script arguments usage.
-
-- due Tuesday next week 10/11: do and [submit](https://github.com/UWMadison-computingtools/coursedata#commit-push-and-submit-your-work)
-exercise 3 from [homework 1](https://github.com/UWMadison-computingtools/coursedata/tree/master/hw1-snaqTimeTests).
-The goal of this exercise is to write a shell script with
-search/replace components, with a loop
-and with test statements (for, if/then).
-
-## more shell tools
 
 examples of commands not used earlier --see summary [here](notes0908.html)
 
 ### cut
+
+if not done already, clone these [data](https://github.com/vsbuffalo/bds-files)
+from the "Bioinformatics Data Skills" book by Vince Buffulo
+(outside any existing git repo!).
 
 ```shell
 cd bds-files/chapter-07-unix-data-tools
@@ -32,6 +23,11 @@ head Mus_musculus.GRCm38.75_chr1.bed # chromosome number, start & end position
 cut -f 1 Mus_musculus.GRCm38.75_chr1.bed | sort | uniq # check chromosome 1 only
 cut -f 2 Mus_musculus.GRCm38.75_chr1.bed | head -n 3
 ```
+
+(for what these rows mean: each one is for a genomic "feature",
+same as in the associate `.gtf` file -- check they have the same number of lines
+except for lines of metadata, and see more info in `.gtf`:
+`less -S Mus_musculus.GRCm38.75_chr1.gtf`)
 
 other ways to use options for `cut`:
 
@@ -45,16 +41,25 @@ example from research: data used in
 [Baum et al. 2016](http://onlinelibrary.wiley.com/doi/10.1111/evo.12934/full)
 originally from [Perelman et al. 2011](http://journals.plos.org/plosgenetics/article?id=10.1371/journal.pgen.1001342).  
 54 genes in 178 primate species, from 186 individuals
-(different subspecies).  
-data cleaning: needed to identify and remove duplicates from the same species.  
-step I used repeatedly to get the list of "taxa" in my cleaned file:
+(different subspecies).
+
+to get the example file: clone
+[lecture-examples](https://github.com/UWMadison-computingtools-master/lecture-examples)
+(and 'git pull' to get updates later in the semester)
+
+```shell
+cd ../../classroom-repos/lecture-examples/
+less -S combined.nex
+wc combined.nex
+```
+
+data cleaning: needed to get the list of individuals and to identify species
+with multiple subspecies; we needed to remove 'duplicates' to keep a single
+representative per species.
+step I used to get the current list of "taxa" in my cleaned file:
 <!-- see more in readme.md in that folder -->
 
 ```shell
-cd ../../coursedata/lecturedata
-head -n 6 combined.nex
-head -n 7 combined.nex
-wc combined.nex
 grep '_' combined.nex | cut -f 1 -d ' ' > taxa
 wc taxa
 head taxa
@@ -63,7 +68,7 @@ head taxa
 ### sort
 
 `-k` to sort by specific columns (keys). example below:
-`-k1,1` to sort by keys in column1 to 1,
+`-k1,1` to sort by keys in columns 1 to 1,
 then `-k2,2` to resolve ties by to sorting columns 2 to 2, and
 `n` to sort that 2nd column numerically,
 `r` to sort that 2nd column it in reverse order.  
@@ -81,8 +86,9 @@ sort -t, -n Mus_musculus.GRCm38.75_chr1_bed.csv | head
 sort -t, -nr Mus_musculus.GRCm38.75_chr1_bed.csv | head
 ```
 
-exercise: extract all the features (and counts) for gene "ENSMUSG00000033793".
-[the feature name is in the 3rd column]
+exercise: extract all the features (and counts) for gene "ENSMUSG00000033793",
+from file `Mus_musculus.GRCm38.75_chr1.gtf`.
+[1 line = 1 feature, the feature name is in the 3rd column]
 <!--
 grep "ENSMUSG00000033793" Mus_musculus.GRCm38.75_chr1.gtf | cut -f3 | sort | uniq -c
 -->
@@ -128,6 +134,13 @@ basename -s "txt" "relative/path/to/myfile.txt"
 basename -s ".txt" "relative/path/to/myfile.txt"
 basename -s "le.txt" "relative/path/to/myfile.txt"
 ```
+
+## tree
+
+freebie: `tree directory_name` shows the content of a folder
+in a tree-like format (I do love trees).
+
+to get `tree` on macOS: `brew install tree`
 
 ---
 
@@ -186,6 +199,10 @@ Always check for weird errors.
 exercise: extract the unique transcript names in the data file
 `Mus_musculus.GRCm38.75_chr1.gtf`: string after "transcript_id".
 
+```shell
+less Mus_musculus.GRCm38.75_chr1.gtf # type /transcript_id to search and highlight instances
+```
+
 option 1: search for (and output) "transcript_id" and the following string,
 extract this string, remove the quotes, remove duplicates.
 recall `uniq` removes consecutive duplicates.
@@ -193,7 +210,6 @@ recall `uniq` removes consecutive duplicates.
 option 2: search for lines not starting by #, then replace 'transcript_id "anything but double quote, captured"' by what was captured (inside the double quotes).
 
 ```shell
-less Mus_musculus.GRCm38.75_chr1.gtf # type /transcript_id to search and highlight instances
 grep -E -o 'transcript_id "\w+"' Mus_musculus.GRCm38.75_chr1.gtf |
   cut -f2 -d" " | sed 's/"//g' | sort | uniq | head # or redirect: > newFileName.txt
 grep -v "^#" Mus_musculus.GRCm38.75_chr1.gtf |
@@ -221,4 +237,5 @@ sed -E 's/transcript_id ".*([^"]+)".*/\1/' greedy_example.txt # what happened he
 
 
 ---
-[previous](notes0929.html) & [next](notes1006.html)
+[previous](notes0929.html) &
+[next](notes1006.html)

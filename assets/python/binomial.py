@@ -23,7 +23,7 @@ if not (args.test or (args.n and args.k)):
 def logfactorial(n, k=0):
     """calculate the log of factorial n: log(1) + ... + log(n).
     optional argument: k (default 0) to calculate log(n!/k!)
-    assumes n and k is a non-negative integer.
+    assumes n and k are non-negative integers.
     If k>n, the result is 0, not an error.
     Examples:
 
@@ -41,8 +41,8 @@ def logfactorial(n, k=0):
     assert type(k)==int, "optional argument k should be an integer"
     assert k >= 0, "optional argument k should be >= 0:" + str(k)
     res = 0
-    for i in range(k,n):
-        res += math.log(i+1)
+    for i in range(k+1,n+1):
+        res += math.log(i)
     return res
 
 def choose(n,k, log=False):
@@ -52,19 +52,23 @@ def choose(n,k, log=False):
     If log=True: returns the log of the binomial coefficient.
     Examples:
 
-    >>> round(choose(12,10), 7)
-    66.0
-    >>> round(math.exp(choose(5,4, log=True)), 7)
-    5.0
-    >>> round(choose(6,6), 7)
-    1.0
-    >>> round(choose(0,0), 7)
-    1.0
+    >>> choose(12,10)
+    66
+    >>> round(choose(5,4, log=True), 7) # log of 5
+    1.6094379
+    >>> choose(6,6)
+    1
+    >>> choose(0,0)
+    1
+    >>> choose(3,10)
+    Traceback (most recent call last):
+      ...
+    AssertionError: n (3) should be >= k (10)
     """
     assert k <= n, "n (" + str(n) + ") should be >= k (" + str(k) + ")"
     res = logfactorial(n,k) - logfactorial(n-k)
     if not log:
-        res = math.exp(res)
+        res = round(math.exp(res))
     return res
 
 def runTests():

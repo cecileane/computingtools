@@ -1,21 +1,14 @@
 ---
 layout: page
-title: 9/27 notes
+title: track versions of a project with git
 description: notes, links, example code, exercises
 ---
-[previous](notes0922.html) & [next](notes0929.html)
+[previous](notes0922-markdown.html) &
+[next](notes0929.html)
 
 ---
 
-## homework
-
-You should have finished exercises 1 & 2 in
-[homework 1](https://github.com/UWMadison-computingtools/coursedata/tree/master/hw1-snaqTimeTests).
-We will be track these files with git next time, so have them ready
-by Thursday for sure!
-
-
-## Git: track and share versions of a project
+#### overview
 
 - you take snapshots of your project once in a while. one "commit" = one snapshot
 - git stores the changes between snapshots, not the whole files
@@ -125,15 +118,20 @@ let's check:
 git show   # shows last commit: title, paragraph, diffs: change "hunks"
 git status # nothing in staging area, but some files not tracked
 git log
+git log --pretty=oneline
 ```
 
-add more edits:
+in a commit message: the first line has a special role, *must* be kept short  
+by the way: `git log` uses `less` to view your git history
+
+now add more edits:
 
 ```shell
-echo "Project started 2016-09-14" >> readme.md
+echo "Project started 2018-09-24" >> readme.md
 git diff
 git commit -a -m "added project info to main readme"
 git log
+git log --pretty=oneline --abbrev-commit
 ```
 
 option `-a` in git commit: to add all changes in tracked file to the commit.
@@ -145,6 +143,16 @@ git mv data/readme data/readme.md
 git status
 git commit -m "added markdown extension to data readme"
 git log
+```
+
+much more complicated alternative to `git mv`:
+(do *not* run!! just to convince you that `git mv` is much better)
+
+```shell
+mv data/readme data/readme.md # not good: new file name not tracked
+git add data/readme    # track the deletion of data/readme
+git add data/readme.md # tract the addition of data/readme.md
+git status # git's best explanation of these changes is a file rename
 ```
 
 ### what files (not) to track / commit
@@ -163,6 +171,7 @@ do **not** track:
 - large data files: if can be obtained from outside archive
 - binary files: document where they were obtained or how to recompile
 - pdf and figures: document how they can be reproduced
+- MS Word documents: they are not plain text files
 
 We can tell git to ignore files that we do not want to track.
 
@@ -201,5 +210,5 @@ git status
 ```
 
 ---
-[previous](notes0922.html) & [top](#git-track-and-share-versions-of-a-project)
+[previous](notes0922-markdown.html) & [top](#overview)
 & [next](notes0929.html)

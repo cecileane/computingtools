@@ -1,33 +1,28 @@
 ---
 layout: page
-title: 9/22 notes
+title: searching with regular expressions, grep, find
 description: notes, links, example code, exercises
 ---
 
-[previous](notes0920.html) & [next](notes0927.html)
+[previous](notes0915.html) & [next](notes0922-markdown.html)
 
 ---
 
-## homework
-
-- did you do the exercises to [practice grep](#more-practice-with-grep)?
-- for Tuesday next week: do exercise 2 of [homework 1](https://github.com/UWMadison-computingtools/coursedata/tree/master/hw1-snaqTimeTests)  
-  document your new work in your readme file, save your work
-- finish the exercises from the "finding things"
-  [software carpentry](http://swcarpentry.github.io/shell-novice/07-find/)
-  section, except for "tracking a species" (we need to learn more about
-  shell scripts for this).
+in class: "finding things"
+[software carpentry](http://swcarpentry.github.io/shell-novice/07-find/)
+section, except for "tracking a species"
+(we will come back to shell scripts and more shell tools later),
+and except for exercises: to do at home.
 
 ---
 
-We did the
-[sorftware carpentry](http://swcarpentry.github.io/shell-novice/07-find/)
-section on finding things, except for the exercises (to do at home).
+## quotes with shell commands
 
 Note about no quotes, double quotes and single quotes,
 to control how much the shell should expand/interpret:
 
 ```shell
+$ cd softwarecarpentry-data-shell/writing/
 $ echo *.txt
 haiku.txt
 $ echo "*.txt"
@@ -55,15 +50,7 @@ grep "and" filename
 echo "orchestra and band" | grep "and" # to search a string, not a file
 grep -w "and" *
 find . -type d
-```
-
-examples using a pipe and `xargs` instead of command substitution:
-(try from the "writing" directory in software carpentry data folder)
-
-```shell
-wc -l $(find . -name '*.txt')
-find . -name '*.txt' | xargs wc -l # xargs runs "wc -l xxx" where xxx = input (from find) as arguments to wc
-find . -name '*.txt' | xargs -n 1 wc -l # to analyze each file with wc one at a time, parallelized
+find . -name "a*.txt"
 ```
 
 Some options for `grep`:  
@@ -79,9 +66,29 @@ exercise: find the option to get the matched pattern to be colorized.
 
 Some options for `find`:  
 `-type` with `d` or `f` for directory / file  
-`-name` with a regular expression (say `'*.pdf'`)  
+`-name` with a shell pattern (say `'*.pdf'`)  
 `-d` for depth (e.g. `-d 1` or `-d +1` or `-d -1`)  
 `-mtime` for modified time
+
+### argument versus input content: xargs
+
+after pipe: to tell that the standard output of the first command
+should serve as argument(s) to the next command, not as standard input
+
+examples using a pipe and `xargs`
+(try from the "writing" directory in software carpentry data folder)
+
+```shell
+ls *.txt       # shows haiku.txt
+ls *.txt | cat # shows haiku.txt instead of showing the content of haiku.txt
+ls *.txt | xargs cat # show the content of the file instead of the filename
+find . -name '*.txt' | wc -l # does not work: indicates 4 lines
+find . -name '*.txt' | xargs wc -l # xargs runs "wc -l xxx" where xxx = input (from find) as arguments to wc
+find . -name '*.txt' | xargs -n 1 wc -l # to analyze each file with wc one at a time, parallelized
+wc -l $(find . -name '*.txt')
+```
+
+last line: command substitution `$()` instead of a pipe (and `xargs`)
 
 ### GNU vs BSD command-line tools
 
@@ -91,7 +98,6 @@ Install the GNU tools with [homebrew](http://brew.sh):
 
 ```shell
 brew install coreutils # basic tools like ls, cat etc.
-brew tap homebrew/dupes
 brew install grep      # to get GNU grep, not included in basic tools
 brew install gnu-sed   # to get GNU sed, also not included in basic
 ```
@@ -99,10 +105,25 @@ brew install gnu-sed   # to get GNU sed, also not included in basic
 then use `gcat` instead of `cat`, `ggrep` instead of `grep` etc.
 
 <!--
+`brew update` first, if brew installed some time ago
+`brew doctor` if coreutils didn't link: gives command to change owner of folders
+in which brew wants to install core utilities
+
 `brew --prefix coreutils` showed me `/usr/local/opt/coreutils`
-in which there was `bin/` with all the "g" tools. I then checked to see if
-this directory was in my PATH variable: `echo $PATH`. It wasn't. but gcat and gecho worked.
+in which there was `bin/` with all the "g" tools (like gls, gcat, gecho, ...).
 ggrep and gsed were not there.
+
+to use these commands with their normal names,
+add a "gnubin" directory to your PATH from your bashrc like: PATH="/usr/local/opt/coreutils/libexec/gnubin:$PATH"
+MANPATH="/usr/local/opt/coreutils/libexec/gnuman:$MANPATH"
+
+for grep:
+PATH="/usr/local/opt/grep/libexec/gnubin:$PATH"
+MANPATH="/usr/local/opt/grep/libexec/gnuman:$MANPATH"
+
+for sed:
+PATH="/usr/local/opt/gnu-sed/libexec/gnubin:$PATH"
+MANPATH="/usr/local/opt/gnu-sed/libexec/gnuman:$MANPATH"
 -->
 
 ## regular expressions: "regexp"
@@ -212,229 +233,57 @@ How to match lines with white spaces only?
 dot, words, digits:
 
 ```shell
-cd ../../coursedata/hw1-snaqTimeTests
+cd classroom-repos/hw1/
 cat out/timetest9_snaq.out
 grep "Elapsed time" out/timetest9_snaq.out #  Elapsed time: 34831.465925074 seconds in 10 successful runs
-grep "Elapsed time." -o out/timetest9_snaq.out # . matches any one character
-grep "Elapsed time. \d+" -o out/timetest9_snaq.out # no match: need Extended regexp
-grep -E "Elapsed time. \d+" -o out/timetest9_snaq.out # \d = digit, +: one or more
-grep -E "Elapsed time. \d+\.\d" -o out/timetest9_snaq.out # need to escape the dot to match "."
+grep -o "Elapsed time." out/timetest9_snaq.out # . matches any one character
+grep -o "Elapsed time. \d+" out/timetest9_snaq.out # no match: need Extended regexp
+grep -oE "Elapsed time. \d+" out/timetest9_snaq.out # \d = digit, +: one or more
+grep -oE "Elapsed time. \d+\.\d" out/timetest9_snaq.out # need to escape the dot to match "."
 ```
 
-## Set up and manage an analysis project
+- with GNU grep (Linux), replace option `E` by `P` above: `\d` is Perl syntax
+- document your code: say which platform was used (GNU versus BSD)
+- or avoid Perl-like patterns: e.g. avoid `\d` and use `[0-9]` instead.
+  The following works with both GNU and BSD grep:
 
-- well organized
-- well documented
-
-key to
-
-- collaborate with yourself in 6 months
-- re-run some analyses or run some new analyses
-  in 6 months because the reviewers ask to
-- collaborate with others
-- communicate with your advisor
-- detect errors
-
-### directory structure
-
-- at the onset: create a few directories (`mkdir`) and
-  empty `readme` files (`touch`)
-- all files in a project: live in a single directory, with a **clear name**
-  (don't scatter your files)
-- separate directories for:
-   * data
-   * scripts
-   * binaries (of other people's programs that you used)
-   * results, or analysis
-   * figures
-   * manuscript
-   * or even: subprojects, with its own script & analysis directories
-- `data`: all in the same directory, or separate directory `data_clean`
-  for intermediate data, or subdirectories `data/original` and `data/clean`.
-  Never edit raw data. Use a script to clean the original data file,
-  then save the resulting clean data.
-- `results` or `analysis`: if the pipeline is complex, use different directories
-  for different kinds of results (intermediate, or different analyses),
-  or subdirectories
-- `scripts`: if there are many, organize them in subdirectories.  
-- use *relative paths* in scripts: you can move your entire directory somewhere
-  else (e.g. on your collaborator's laptop) and things will still work.
-- short scripts to double-check quality, make a quick figure, etc: may be in
-  `results`.
-- `figures`: not everybody will agree. Can make your life easier to
-  modify a figure for a publication (if asked by reviewers) or for a
-  presentation 6 months later.
-
-recall advice on [file names](notes0908#file-names)
-
-example: SNP calling in corn (*Zea mays*)
-
-```shell
-cd ~/Documents/private/st679
-mkdir zmays-snps
-cd zmays-snps
-mkdir data
-mkdir data/seqs scripts analysis
-ls -l
+```bash
+grep -oE "Elapsed time. [0-9]+\.[0-9]" out/timetest9_snaq.out
 ```
 
-### project documentation
+#### exercise
 
-document:
+write a one-liner to count the number of
+"Subsets" whose "Best Model" is GTR+G in this file:
+[partitionfinder_bestscheme.txt](https://osf.io/z3pqm/)
+(68 out of 95)
 
-- data provenance (metadata): who sent which file, when, how?
-  downloaded from where, when, how (e.g. MySQL vs UCSC Genome Browser)?
-- binaries (programs, R packages): url, version, date installed
-  (version for R, for R studio, for R packages)
-- methods and workflows: **everything** that would be needed if you had
-  to re-run the whole thing. Copy-paste full command lines to re-generate
-  clean data files, intermediate files & results.
 
-how:
+### more practice with find
 
-- use **plain text readme** files. Can easily be
-   * read, searched, edited from command lines (good if working on remote server)
-   * portable, light
-   * text files written in 1960s: still readable.  
-     files from 15-year-old word processor: might be difficult to open or edit.
-- Microsoft Word is **not** good for analysis project documentation
-- at least one `readme` file per directory.
-  Explain what is is the directory, where from & when, how it got there.
+find and delete annoying hidden files.  
+example: Mac creates `.DS_Store` files and hides them very well,
+but annoying with git.  
+let's do it step by step, to see the process of building a safe one-liner:
 
-```shell
-touch readme.md data/readme
+```bash
+find ~ -name ".DS_Store" | wc
+find ~ -name ".DS_Store" -d 2 | wc
+find ~ -name ".DS_Store" -d 2 # view them all if there is a small number of them
+find ~ -name ".DS_Store" -d 2 | xargs rm # check that it works
+find ~ -name ".DS_Store" | xargs rm # deleted all of them
+find / -name ".DS_Store" | wc # more ambitious: starting from the root
+sudo find / -name ".DS_Store" -d 2 | wc # need super-user permission to list files near the root
+sudo find / -name ".DS_Store" | xargs rm
 ```
 
-`touch` updates the modification time of a file or
-creates a file if it doesn’t already exist.
+above: fails on files that contain spaces...  
+alternative that works if file / directory names contain spaces:
+use the `-exec` option of `find` to execute a command on each file that was found
 
-use *brace expansion* to create a directory structure in one step:
-
-```shell
-echo dog-{gone,bowl,bark}
-mkdir -p zmays-snps/{data/seqs,scripts,analysis}
-```
-
-let's create some empty files to illustrate more uses of wildcards.
-supposedly from 3 corn samples: A, B and C, and 2 files for each because
-paired-end sequencing data: read pair R1 or R2.
-
-```shell
-cd data
-touch seqs/zmays{A,B,C}_R{1,2}.fastq
-ls seqs/
-ls seqs/zmaysB*
-ls zmays[AB]_R1.fastq
-ls zmays[A-B]_R1.fastq
-ls zmaysA_R{1..2}.fastq
-ls -lR
-```
-
-## markdown for project notebooks
-
-light-weight markup format. plain text, extension `.md`.
-Many "dialects" e.g. R markdown `.Rmd`.
-Original markdown [reference](http://daringfireball.net/projects/markdown/syntax).
-
-interlude: advantage of plain text files for reports and data:
-[Excel errors](http://www.economist.com/blogs/graphicdetail/2016/09/daily-chart-3)
-
-- easy to read the plain text format
-- easy to track changes
-- easy to render as pdf, html, etc. GitHub and Dropbox do it automatically.
-
-basic syntax:
-
-| markdown syntax | result |
-|:---|:---|
-|\*emphasis\*| *emphasis* |
-|\*\*bold\*\*  | **bold** |
-|\`inline code\` | `inline code`|
-|\<http://website.com/link\> | <http://website.com/link>|
-|\[link text\]\(http://website.com/link\)|[link text](http:// website.com/link)|
-|!\[text\]\(path/to/image.png\) | ![text](path/to/image.png) image with alternative text "text"|
-| # chapter 1   | level-1 header |
-| ## section 1.1 | level-2 header |
-| ### paragraph 1.1.1 | level-3 header |
-|--------|------------|
-|        |            |
-{: rules="groups"}
-
-level-1 and level-2 headers can also be obtained like this:
-
-    chapter 1
-    =========
-
-    section 1.1
-    ----------
-
-numbered or bulleted lists:
-
-    * first point, itemized
-    - second point
-      2. indentation is necessary
-      2. nested list
-      1. numbers can be messed up, see how it's rendered below
-
-which gives this:
-
-* first point, itemized
-- second point
-  1. indentation is necessary
-  2. nested list
-  1. only the first number is used, see how it's rendered below
-
-to get code blocks, indent with 4 spaces (or 8 spaces if within a list):
-
-&nbsp;&nbsp;&nbsp;&nbsp;this will be a block.  
-&nbsp;&nbsp;&nbsp;&nbsp;can be used for quotes as well.
-
-or use 3 backticks, possibly followed by the language name:
-
-\`\`\`r  
-foo <- function(x){x+1} # R function "foo", just adds 1  
-foo(2)  
-\`\`\`
-
-which gives this:
-
-```r
-foo <- function(x){x+1} # R function "foo", just adds 1
-foo(2)
-```
-
-This other code block:
-
-\`\`\`julia  
-function foo(x) # Julia function "foo", just adds 1  
-&nbsp;&nbsp;&nbsp;&nbsp;x+1  
-end  
-foo(2)  
-\`\`\`
-
-gives this:
-
-```julia
-function foo(x) # Julia function "foo", just adds 1
-    x+1
-end
-foo(2)
-```
-
-With ```` ``` ```` instead of ```` ```julia ```` at the beginning,
-the code block would be rendered without color highlights.
-
-### rendering a markdown file to other formats
-
-```shell
-cd ~/Documents/private/st679/bds-files/chapter-02-bioinformatics-projects
-less notebook.md
-pandoc notebook.md
-pandoc notebook.md > notebook.html
-pandoc -o notebook.html notebook.md
-pandoc -o notebook.pdf notebook.md
-pandoc -o notebook.tex notebook.md
+```bash
+sudo find / -name ".DS_Store" -exec rm {} \;
 ```
 
 ---
-[previous](notes0920.html) & [next](notes0927.html)
+[previous](notes0915.html) & [next](notes0922-markdown.html)

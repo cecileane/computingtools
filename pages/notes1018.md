@@ -1,64 +1,12 @@
 ---
 layout: page
-title: 10/18 notes
+title: connecting to remote machine to run long jobs
 description: course notes
 ---
-[previous](notes1013.html) & [next](notes1020.html)
+[previous](notes1013.html) &
+[next](notes1020.html)
 
 ---
-
-## homework
-
-Review the solution of exercise 3 for 2 of your peers:
-
-  * provide constructive feedback for each one via a github issue discussion,
-  * by email, send me marks according the grading [rubric](https://github.com/UWMadison-computingtools/coursedata/blob/master/rubric.md) (dummy example  [here](https://github.com/UWMadison-computingtools/coursedata/blob/master/marktemplate.csv)).
-
-**Install python 3** (and the [conda](http://conda.pydata.org/)
-package management) if you don't already have it.
-
-- do `which python` and `python --version` to see if you already have python
-  installed, and if so, what version you have. Versions 3.x are not
-  back-compatible with version 2.x. We will work with version 3.
-  If you see that you have version 2.x (like 2.7.10), then you will need
-  to install python 3.
-
-- follow instructions from [software carpentry](http://uw-madison-aci.github.io/2016-06-08-uwmadison/#python),
-  with Anaconda. Make sure to choose **python 3.5** and not Python 2.7.
-  Read below if you want a lighter installation that uses less memory.
-
-- test that the installation worked:
-
-  ```shell
-  $ python --version
-  Python 3.5.2 :: Anaconda 4.2.0 (x86_64)
-  ```
-
-  If you don't get anything or not a python 3.x version, exit your shell,
-  open it again, and try `python --version` again.
-  Also do `conda list` to see what conda installed for you.
-
-- Anaconda installs for you several things: the conda package manager,
-  python, ipython notebook, and many python libraries like numpy and scipy.
-  It took 1.4G of hard disk for me. If you want a lighter installation,
-  install [miniconda3](http://conda.pydata.org/miniconda.html) instead. It gets you python 3 and the [conda](http://conda.pydata.org/docs/intro.html)
-  package manager. With conda you can install all these other packages later:
-  as you need them. For instance, the numpy library would
-  be installed with: `conda install numpy`.
-  The [jypyterlab](https://github.com/jupyter/jupyterlab) package could be
-  installed from the [conda-forge](https://conda-forge.github.io) channel with:
-  `conda install -c conda-forge jupyterlab`.  
-  If you installed miniconda instead of anaconda, do a
-  [test drive](http://conda.pydata.org/docs/test-drive.html).
-
-- jupyter: some students using Bash (Ubuntu) on Windows had errors running jupyter.
-  This Windows [bug report](https://github.com/Microsoft/BashOnWindows/issues/185)
-  has a fix that worked for some:
-  `conda install -c jzuhone zeromq=4.1.dev0`
-
----
-
-<p></p>
 
 ## connecting to remote machines: ssh, scp
 
@@ -69,11 +17,23 @@ ssh ane@desk22.stat.wisc.edu # need to authenticate. password: # characters not 
 hostname
 logout
 hostname # just in case I switch a lot and don't remember
-cat ~/.ssh/known_hosts
+```
+
+message after first login to a machine:
+
+```
+RSA key fingerprint is SHA256:xxx.
+Are you sure you want to continue connecting (yes/no)?
+```
+
+if yes, information stored in `~/.ssh` folder:
+
+```shell
+less -S ~/.ssh/known_hosts
 ssh desk22.stat.wisc.edu # login name not needed if same as on local machine
 cd private/st679/
 ls
-emacs -nw notes/statservers.md # or nano: no new window. ^X^C to quit.
+emacs -nw notes/statservers.md # or nano or vim: no new window. ^X^C to quit emacs.
 logout
 ```
 
@@ -89,10 +49,9 @@ github profile.
 machine name and full path on the remote machine. works over ssh.
 
 ```shell
-scp ane@desk22.stat.wisc.edu:private/st679/notes/statservers.md ../notes/
-cd ..
+scp -p ane@desk22.stat.wisc.edu:private/st679/notes/statservers.md notes/
 ls -l notes/statservers.md
-scp -r desk22.stat.wisc.edu:private/st679/coursedata/hw1-snaqTimeTests/log .
+scp -r desk22.stat.wisc.edu:private/st679/classroom-repos/hw1/log .
 ls -l
 ls -l log/
 echo "hi Cecile" > coolfile
@@ -104,12 +63,16 @@ slight difference between cp and scp:
 `cp -r log  target/path/` copies the directory itself *and* its content
 
 ```shell
-rm -rf log/
-cp -r coursedata/hw1-snaqTimeTests/log/ .
-ls -l
-cp -r coursedata/hw1-snaqTimeTests/log .
-ls -l log/
-rm -rf *.log log/
+rm -r log
+scp -r desk22.stat.wisc.edu:private/st679/classroom-repos/hw1/log/ .
+ls
+rm -r log
+cp -r classroom-repos/hw1/log .
+ls
+rm -r log
+cp -r classroom-repos/hw1/log/ .
+ls
+rm *.log
 ```
 
 ## long-running jobs: nohup
@@ -118,7 +81,7 @@ Previous example of long-running job: get data and link to program
 [here](https://github.com/UWMadison-computingtools/coursedata/tree/master/example-mrbayes)
 
 ```shell
-cd coursedata/example-mrbayes
+cd classroom-repos/lecture-examples/mrbayes-example/
 ls
 head -n 17 alignedDNA.nex
 head mrBayes-run.nex
@@ -136,13 +99,13 @@ log back in tomorrow to get the results.
 
 ```shell
 ssh desk22.stat.wisc.edu
-cd private/st679/coursedata/example-mrbayes/
+cd private/st679/classroom-repos/lecture-examples/mrbayes-example/
 mb mrBayes-run.nex > screenlog &
 logout
 
 ssh desk22.stat.wisc.edu
 ps -u ane | grep mb # gone
-cd private/st679/coursedata/example-mrbayes/
+cd private/st679/classroom-repos/lecture-examples/mrbayes-example/
 tail screenlog
 ```
 
@@ -155,7 +118,7 @@ logout
 
 ssh desk22.stat.wisc.edu
 ps -u ane | grep mb # still there if lucky
-cd private/st679/coursedata/example-mrbayes/
+cd private/st679/classroom-repos/lecture-examples/mrbayes-example/
 ls -l
 rm -f alignedDNA.nex.* screenlog
 ```
@@ -223,7 +186,7 @@ logout # to start new session (lost token)
 
 ```shell
 tmux new-session -s mb-analysis
-cd private/st679/coursedata/example-mrbayes/
+cd private/st679/classroom-repos/lecture-examples/mrbayes-example/
 ls
 rm -f alignedDNA.nex.* screenlog # clean up things that didn't finish
 emacs mrBayes-run.nex # change ngen=1000000 to 5000000
@@ -275,14 +238,15 @@ a `tmux` (or `screen` session), and run an `ssh` session inside of it.
 
 resources on campus:
 
-- [ACI](https://aci.wisc.edu/services/large-scale/)
+- [ACI](https://aci.wisc.edu/resources/#research-computing-beyond-desktop)
   (advanced computing initiative) and
   [CHTC](http://chtc.cs.wisc.edu) (center for high-througput computing)
   with HTCondor for job scheduling
-- new [HPC](http://www.stat.wisc.edu/services/hpc-cluster)
+- [HPC](http://www.stat.wisc.edu/services/hpc-cluster1/overview)
   cluster "lunchbox" in Statistics: uses [slurm](http://slurm.schedmd.com)
   for job scheduling
 
 
 ---
-[previous](notes1013.html) & [next](notes1020.html)
+[previous](notes1013.html) &
+[next](notes1020.html)

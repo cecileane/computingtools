@@ -1,46 +1,41 @@
 ---
 layout: page
-title: 12/6 notes
+title: introduction to julia
 description: course notes
 ---
-[previous](notes1117.html) & [next](notes1208.html)
+[previous](notes1117.html) &
+[next](notes1206-juliapackages.html)
 
 ---
 
-## homework
-
-- due today: scripting project
-- install [julia](http://julialang.org) v0.5.0:
-  * click on "downloads" then choose the command-line version for your system
-  * On a Mac, I had to add the path to julia to my PATH shell variable,
-    in file  `~/.bash_profile`:
-
-    `export PATH="$PATH:/Users/ane/.julia/v0.5/Conda/deps/usr/bin"`
-
-  * on Statistics servers: Julia is already installed in `/s/julia-0.5.0`.
-    Simply add its path to your PATH variable: add to your file `~/.bashrc.local`
-    this line:
-
-    `export PATH="$PATH:/s/julia-0.5.0/bin"`
-
-  * open a terminal and type "julia" to check that it works, then type
-    `quit()` to close it.
-
-- in jupyter lab: check that Julia 0.5.0 is available as a kernel
-- in Atom: click on Packages, Setting View, Install Packages.
-  In the new window, type "language-julia", click "Packages", then "Install".
-  This "language-julia" package will highlight
-  julia syntax for files with extension `.jl`.
-
-
-## introduction to Julia
-
+[install](juliainstallation.html) and
 jump to:
 
+- [modes](#modes)
 - [types](#types)
 - [(im)mutable](#immutable-types) types
-- [modes](#modes)
-- [JIT](#just-in-time-jit-compiled) compiled: fast, type declaration not needed
+- [abstract types](#abstract-types)
+- [JIT](#compiled-just-in-time-jit) compiled: fast, type declaration not needed  
+  multiple "methods" for the same function
+- [view](#view-source-code) source code
+
+### modes
+
+- help mode: type "?" in the REPL.
+  goes back to julian mode right after,
+  or press backspace.
+- shell mode: type ";".
+  goes back to julian mode right after (or press backspace)
+- package mode: type "]"; press backspace to go
+  back to julian mode
+- R mode (kinda): type "$", `using RCall` package.
+  backspace to go back to julia mode.
+
+many [key bindings](https://docs.julialang.org/en/v1/stdlib/REPL/#Key-bindings-1)
+e.g. arrows for history,
+start a command then arrows for historical commands
+starting the same way,
+`^D` to exit.
 
 ### types
 
@@ -96,21 +91,22 @@ pop!(b) # no pop() function
 how to initialize arrays:
 
 ```julia
-Vector(3)
-Vector{Int}(3)
-Array{Int}(3)    # uninitialized
-Array{Int8}(3,4) # 2-dimensional array: 3x4
+Vector{Float64}(undef, 3) # uninitialized
+Vector{Union{Missing, Int}}(missing, 3)
+Array{Float64}(undef, 3)  # uninitialized
+a = Array{Int8,2}(undef, 3,4) # 2-dimensional array: 3x4
+similar(a) # uninitialized
 zeros(3) # Float by default
 ones(3)
 zeros(Int,3)
 zeros(Bool,3)
 ```
 
-see limits [here](http://docs.julialang.org/en/release-0.5/manual/integers-and-floating-point-numbers/)
+see limits [here](https://docs.julialang.org/en/v1/manual/integers-and-floating-point-numbers/)
 and mind them, because potential errors otherwise:
 
 ```julia
-x=2^63-1 # upper limit for Int64: 1bit for sign and 63 bits of 1
+x=2^63-1 # upper limit for Int64: 1 bit for sign and 63 bits of 1
 typemax(Int64)
 x*2      # wrong! overflow
 ```
@@ -123,67 +119,127 @@ types have fields, but no methods: functions have multiple methods instead
 mutable: arrays, composite types (typically)  
 immutable: numbers, tuples, strings
 
-### modes
+### abstract types
 
-- help mode: type "?" in the REPL. goes back to julia mode right after.
-- shell mode: type ";". goes back to julia mode right after.
-- R mode (kinda): type "$", `using RCall` package.
-  backspace to go back to julia mode.
+abstract types are used to define broader classes,
+see this [figure](https://commons.wikimedia.org/wiki/File:Type-hierarchy-for-julia-numbers.png)
+from
+[here](https://en.wikibooks.org/wiki/Introducing_Julia/Types#Type_hierarchy):
 
-### just-in-time (JIT) compiled
+```julia
+Int64 <: Integer # Int64 is concrete, Integer is abstract: no object of type Integer per se
+supertype(Int)
+supertype(Signed)
+subtypes(Signed)
+subtypes(Integer)
+Float32 <: AbstractFloat
+Integer <: Number
+isa(3, Int)
+isa(3, Integer)
+isa(3, Float64)
+isa(3, AbstractFloat)
+isa(3, Number)
+```
+
+any object must have a concrete type
+
+### compiled just-in-time (JIT)
 
 <!-- example below from Steven Johnson's [video](https://www.youtube.com/watch?v=jhlVHoeB05A&list=PLYx7XA2nY5GfavGAILg08spnrR7QWLimi)
 of his talk at EuroSciPy 2014 (1h11)
 -->
 
 ```julia
-function foo(x)
+function addone(x)
   return x+1
 end
 
-foo(x) = x+1 # one-line form
+addone(x) = x+1 # one-line form
 ```
 
 let's use this function on various inputs:
 
 ```julia
-foo(3) # compiles foo for Int arguments
-foo(7) # re-use compiled foo(Int)
-foo(7.2) # compiles a different version for Float64 arguments
-foo([1,2,7,9]) # compiles 3rd version for Array{Int64,1}
-code_llvm(foo, (Int,)) # inspect generated code
-code_llvm(foo, (Float64,))
-code_llvm(foo, (Array{Int64,1},))
-code_native(foo, (Int,))
-code_native(foo, (Float64,))
-code_native(foo, (Array{Int64,1},))
+addone(3)   # compiles addone for Int argument
+addone(7)   # re-use compiled addone(Int)
+addone(7.2) # compiles a different version for Float64 arguments
+code_llvm(addone, (Int,)) # inspect generated code
+code_llvm(addone, (Float64,))
+code_native(addone, (Int,))
+code_native(addone, (Float64,))
+```
+
+by the way, we can vectorize a function by addind a `.` just before
+the opening parenthesis, or just before the symbol for `+` etc.:
+```julia
+addone.([1,2,7,9])
+addone.([1 2; 6 7])
+[1,5,9] .+ 3
+log.([1,2.71,10])
+log.(10,[1,2.71,10]) # 10 recycled: all logs in base 10
+log.([2,10], [4,10])
 ```
 
 Julia uses the type of the arguments to infer which compiled version to run:
 multiple dispatch
 
-- makes it really [fast](http://julialang.org)
-(scroll down to High-Performance JIT Compiler)
+- makes it really [fast](https://julialang.org/benchmarks/)
 - rare need to declare input types:
 
 ```julia
 function addone(x::Number)
   return x+1
 end
+methods(addone)
 addone(3.5)
-addone([1 2; 6 7])
+addone([1 2; 6 7]) # error
+addone.([1 2; 6 7])
 ```
 
 better and no penalty because different
 compiled versions for different input types anyway:
 
 ```julia
-function addone(x) # no type declaration
-  return x+one(1)  # + or one() will throw error is bad type
+function addone(x) # no type declaration. re-defining
+  return x+one(x)  # one(x) = identity element for * of same type as x
 end
+methods(addone)
 addone(3.5)
-addone([1 2; 6 7])
+addone([1 1; 1 1])  # matrix-wise operation
+addone.([1 1; 1 1]) # element-wise operation
+
+function addone(x::String)
+  return x * " one"
+end
+methods(addone)
+addone("take")
+"take" * one("take")  # the go-to method is not used
+one("take") # identity for * on strings is empty string "", not "one"
+addone.(["take","make","share"])
+```
+
+### view source code
+
+`less`: to see the julia code for a function (in a package):
+need to ask for a specific method using the function signature,
+tuple of Types
+
+```julia
+methods(sort)
+less(sort, (AbstractArray{Int,1},)) # function name, tuple of argument types
+@less sort([7,2,8]) # same result as above
+```
+
+This last line opens the viewer "less" to view the file where
+the code is defined, for the particular function on the particular types
+of input. also shows file name & path.
+
+```julia
+typeof(10:-1:1)
+less(sort, (StepRange,)) # StepRange is an AbstractRange
+@less sort(10:-1:1)      # same thing
 ```
 
 ---
-[previous](notes1117.html) & [next](notes1208.html)
+[previous](notes1117.html) &
+[next](notes1206-juliapackages.html)

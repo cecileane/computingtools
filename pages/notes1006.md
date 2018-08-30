@@ -1,25 +1,17 @@
 ---
 layout: page
-title: 10/6 notes
+title: more shell with 'if', script arguments, arithmetic
 description: course notes
 ---
-[previous](notes1004.html) & [next](notes1011.html)
+[previous](notes1004.html) &
+[next](notes1011.html)
 
 ---
-
-## homework
-
-due T 10/11: do and [submit](https://github.com/UWMadison-computingtools/coursedata#commit-push-and-submit-your-work)
-exercise 3 from [homework 1](https://github.com/UWMadison-computingtools/coursedata/tree/master/hw1-snaqTimeTests).
-The goal of this exercise is to write a shell script with
-search/replace components, with a loop
-and with test statements (for, if/then).
-
----
-
-## shell scripts
 
 ### script arguments
+
+see [shell scripts](http://swcarpentry.github.io/shell-novice/06-script/)
+from the software carpentry
 
 command-line arguments stored in variables `$1`, `$2`, etc.  
 `$0`: name of script
@@ -46,7 +38,7 @@ bash headtail.sh Mus_musculus.GRCm38.75_chr1.bed
 bash headtail.sh Mus_musculus.GRCm38.75_chr1.bed | column -t
 ```
 
-### safe options and permissions
+### safe script options, file permissions
 
 always start your script with this:
 
@@ -120,7 +112,7 @@ echo $i # ++i increments i first, then executes the command
 
 ### `if` statements and checks
 
-example:
+examples:
 
 ```shell
 if [ $i -lt 800 ] # the spaces after `[` and before `]` are REQUIRED
@@ -131,13 +123,23 @@ else
 fi
 ```
 
+```shell
+if [ $i -lt 800 -a $i -ge 790 ] # -a = "and"
+then
+  echo "790 <= i < 800"
+else
+  echo "i<790 or i>=800"
+fi
+```
+
+
 headtail script: let's test and check for at least one argument
 (file name), and if so, test that this file is readable:
 
 ```shell
-if [ $# -lt 1 -o ! -f $1 -o ! -r $1 ]
+if [ $# -lt 1 ] || [ ! -f $1 ] || [ ! -r $1 ]
 then
-  echo "error: no argument, or no file, or file not readable"
+  echo "error: no argument, or argument is not a file, or file not readable"
   exit 1 # exit script with error code (1). 0 = successful exit
 fi
 ```
@@ -155,15 +157,17 @@ exit code: 0 if successful, 1 if unsuccessful (for the shell, 0=true, 1=false!!)
 |`-d thing` | `thing` is a directory. file: `-f`, link: `-h` |
 |`-e thing`| `thing` exists |
 |`-r file`| `file` is readable. writable: `-w`, executable: `-x`|
-|`-o`, `-a`, `!`| or, and, negation |
+| `!`     | negation |
+|`-o`, `-a`, `!`| or, and: to separate expressions within a test `[...]` (*not* short-circuit)|
 |`( )`| to group tests |
+| `||`, `&&` | or, and: to separate different tests (short circuit) |
 |--------|------------|
 |        |            |
 {: rules="groups"}
 
 <!-- `-x`: accessible, if argument is expression -->
 
-short-circuit evaluation: convenient, and *the order is important!*
+short-circuit evaluation with `||` and `&&`: convenient, and *the order is important!*
 
 - "A or B": B is not evaluated if A is true, because
   the result would be true anyway.  
@@ -218,4 +222,5 @@ the end of your `~/.bash_profile` file:
 `export PS1=preferred_choice_here`
 
 ---
-[previous](notes1004.html) & [next](notes1011.html)
+[previous](notes1004.html) &
+[next](notes1011.html)

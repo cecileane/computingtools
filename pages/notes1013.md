@@ -1,23 +1,12 @@
 ---
 layout: page
-title: 10/13 notes
+title: awk, parameter expansion, wget & curl
 description: course notes
 ---
-[previous](notes1011.html) & [next](notes1018.html)
+[previous](notes1011.html) &
+[next](notes1018.html)
 
 ---
-
-## homework
-
-- review the solution of exercise 3 for 2 of your peers:
-  * provide constructive feedback for each one via a github issue discussion,
-  * by email, send me marks according the grading [rubric](https://github.com/UWMadison-computingtools/coursedata/blob/master/rubric.md) (dummy example  [here](https://github.com/UWMadison-computingtools/coursedata/blob/master/marktemplate.csv)).
-
-- I will tag both "reviewers" on the github issue.
-  Check your issues [here](https://github.com/issues) and click on the
-  "Mentioned" tab to see the list of issues where you were tagged.
-  You will not see the issue or the code until the owner of the repository
-  has either made his/her repo public or added you as a collaborator.
 
 ## quick text processing: awk
 
@@ -53,6 +42,9 @@ examples:
 awk '{ print $0 }' example.bed # like cat. No pattern: defaults to true
 awk '{ print $2 "\t" $3 }' example.bed # like cut -f2,3
 awk '$3 - $2 > 18' example.bed # prints lines (default action) if feature length > 18 (bed 0-based)
+threshold=18
+awk '$3 - $2 > $threshold' example.bed        # error: $ reserved for awk fields
+awk -v t=$threshold '$3 - $2 > t' example.bed # -v option: to define awk variables
 awk '$1 ~ /chr1/ && $3 - $2 > 10' example.bed
 awk '$1 ~ /chr2|chr3/ { print $0 "\t" $3 - $2 }' example.bed
 awk 'BEGIN{ s = 0 }; { s += ($3-$2) }; END{ print "mean: " s/NR };' example.bed # mean feature length
@@ -81,7 +73,7 @@ use `${variable_name extra stuff}`.
 var="coolname.txt.pdf.md"
 i=3678
 echo "var=$var and i=$i"
-echo "substrings of parameter values: ${i:1} and ${var:4:5}"
+echo "substrings of parameter values: ${i:1} and ${var:4:5}" # :offset:length
 echo "strip from the end: ${var%.*}"  # strips shortest occurrence
 echo "strip from the end: ${var%%.*}" # strips longest  occurrence
 echo "strip from beginning: ${var#*.}"  # strips shortest occurrence
@@ -109,18 +101,20 @@ ls # new file: dryad.mm11q
 grep "fasta" dryad.mm11q
 grep ".txt" dryad.mm11q
 grep "fasta" dryad.mm11q | wc # 6 fasta files
-wget --accept *.fasta* --accept *.txt* -r -l 1 -nd http://datadryad.org/resource/doi:10.5061/dryad.mm11q
+wget -r -l 1 -nd --accept-regex '\.fasta|\.txt' http://datadryad.org/resource/doi:10.5061/dryad.mm11q
 ```
 
 `wget` can download files recursively: `-r`, but dangerous (aggressive). put limits with options:
 
 - `-l` to limit the level, or maximum depth: `-l 1` to go only 1 link away
-- `--accept xxx` to limit what's accepted: here fasta or txt files.
+- `--accept-regex` to limit what's accepted using a regular expression:
+  here files whose names contain `.fasta` or `.txt`.
 
 `nd` or `--no-directory`: to not re-create the directory hierarchy  
 lots of other options, like: `--no-parent`, `-O`, `--user`, `--ask-password`, `--limit-rate`
 
 The host may block your IP address if you are downloading too much too fast.
+to avoid: use `--limit-rate=50k` or `-w 1` to wait 1 second between file downloads
 
 `curl` writes to standard output.
 
@@ -134,4 +128,5 @@ The host may block your IP address if you are downloading too much too fast.
 `-#`: simple progress bar, no progress meter
 
 ---
-[previous](notes1011.html) & [next](notes1018.html)
+[previous](notes1011.html) &
+[next](notes1018.html)

@@ -1,19 +1,90 @@
 ---
 layout: page
-title: 11/15 notes
+title: python dictionaries & list comprehension; running external programs
 description: course notes
 ---
-[previous](notes1110.html) & [next](notes1117.html)
+[previous](notes1108.html) &
+[next](notes1117.html)
 
 ---
 
-## homework
+- [dictionaries](#dictionaries-hashes)
+- more on [list comprehension](#more-on-list-comprehension)
+- run [external program](#running-external-programs) from within python
+- about [characters](#about-characters)
 
-[homework 2](https://github.com/UWMadison-computingtools/coursedata/tree/master/hw2-datamerge)
-due today.
-Commit and push your work to github, then open a github
-[issue](https://github.com/UWMadison-computingtools/coursedata#commit-push-and-submit-your-work)
-as before.
+## dictionaries (hashes)
+
+dictionaries are similar to lists, except that items not *unordered*.  
+**items**: **key**-**value** pairs, where keys must be strings or numbers
+(or of immutable types)  
+like word-definition pairs in a dictionary.
+
+examples:
+
+```python
+h = {"blue":10, "green":20}
+h # may be printed in different order
+h = {}
+h["blue"]=10 # it's weird that we use [] here and not {}, but not my choice
+h["green"]=20
+h
+del h["green"] # deletes element (binding)
+h
+h.pop("blue") # deletes, but returns value
+h
+```
+
+<!--
+import random
+dna = ""
+for i in range(20):
+  dna += random.choice(["A","C","G","T"])
+-->
+
+example:
+
+- count the number of occurrences of k-mers (words of length k) in a string
+- do not create entries for a k-mer if it does not occur
+- here: use k=2
+
+```python
+dna = "TCAATAGGTGGTCGTTGTTT"
+k2mer = {} # variable names cannot start with a digit
+bases = ["A","C","G","T"]
+for nuc1 in bases:
+  for nuc2 in bases:
+    mycount = dna.count(nuc1+nuc2)
+    if mycount:
+      k2mer[nuc1+nuc2] = mycount
+
+k2mer
+k2mer["TT"]
+k2mer["GC"] # key error
+k2mer.get("TT")
+k2mer.get("GC") # None
+k2mer.get("GC", 0) # default to 0 if key not found
+for nuc1 in bases:
+  for nuc2 in bases:
+    print("count for " + nuc1 + nuc2 + ":", k2mer.get(nuc1+nuc2, 0))
+
+for dinucleotide in k2mer:
+  print("count for " + dinucleotide + ":", k2mer[dinucleotide])
+
+for k,v in k2mer.items(): # k,v for key,value. (k,v) is a tuple
+  print("count for " + k + ":", v)
+
+for dinuc in sorted(k2mer.keys()): # k,v for key,value
+  print("count for " + dinuc + ":", k2mer[dinuc])
+
+for dinuc in k2mer:
+  if k2mer[dinuc] == 2:
+    print(dinuc, "appears twice")
+```
+
+note: why sometimes called "hash"?  
+efficient implementations map keys to unique integers using a hash function,
+then can use an array with these integers.
 
 ## more on list comprehension
 
@@ -94,7 +165,7 @@ print("return code: ", res.returncode,
       "\nstderr:", res.stderr)
 ```
 
-### about characters:
+### about characters
 
 Unicode: code that maps more than 120,000 characters to integers,
 which then need to be coded with 0/1 bits.
@@ -106,6 +177,15 @@ as integer in 0-255. `ord("0")` gives integer 48, `chr(48)` gives
 character '0', `ord("\t")` gives 9.
 Try `bstr = bytes(b"01239abc\n")` then `bstr[8]`.
 
+```python
+ord("é") # unicode character number 233
+bytes("é", encoding='utf-8')
+len(a) # coded with 2 bytes using UTF8 encoding
+a      # b'\xc3\xa9'
+a[0]   # 195 = 12*16 + 3 > 128: not ASCII
+a[1]   # 169 = 10*16 + 9
+```
+
 hexadecimal/hex: "numbers" in base 16=2<sup>4</sup>: to represent a "nibble"
 (4 bits, half a byte). 0-9, a-f
 (recall git commit SHAs, e.g "bec2817eb21e17c49a355878de577a91b9c6c5b6").  
@@ -113,110 +193,6 @@ Try: `0x0`, `0x9`, `0xb`, `0xf`, `0x0f`, `0x2b` (2\*16+11), `0xff` (15\*16+15).
 To write in base 2, use `0b` instead of `0x`, like `0b101011` (32+8+2+1).  
 To get the binary or hexadecimal representation: `bin(43)` or `hex(43)`.
 
-## python classes and methods
-
-object-oriented programming:
-
-- define new "types" of objects: classes
-- each object type has its own data *attributes* and *methods*.  
-- special method: `__init__` to create a new object of the class
-- `self`: name of new object
-- special method: `__str__` to convert an object into a string,
-  used to `print` the object
-
-<!--
-see Karl's
-[lecture](http://kbroman.org/Tools4RR/assets/lectures/13_python_withnotes.pdf)
-for a cool example
--->
-
-example: class to code graphs, or trees, made of nodes and edges.
-
-- Tree class
-- Edge class
-
-Edge class attributes:
-
-- `parent`: index for parent node
-- `child`: index for child node
-
-Copy this to a new file, named `tree.py`:
-
-```python
-#!/usr/bin/env python
-
-class Edge:
-    """Edge class, to contain a directed edge of a tree or directed graph.
-    attributes parent and child: index of parent and child node in the graph.
-    """
-
-    def __init__ (self, parent, child, length=None):
-        """create a new Edge object, linking nodes
-        with indices parent and child."""
-        print("starting __init__ for new Edge object/instance")
-        self.parent = parent
-        self.child = child
-        self.length = length
-
-    def __str__(self):
-        res = "edge from " + str(self.parent) + " to " + str(self.child)
-        return res
-```
-
-let's use it, in a new python session:
-(if not in same directory, add the file's path to python's path:
-`import sys` then `sys.path.append("path/to/tree/dot/py/file")`.)
-
-```python
-import tree
-e1 = tree.Edge(0,1)
-e2 = tree.Edge(0,2)
-e3 = tree.Edge(2,3)
-e4 = tree.Edge(2,4)
-e4
-print(e4)
-```
-
-Tree class attributes:
-
-- `edge`: list of Edge objects
-- methods `add_edge()` to add an existing edge to the list,
-  `new_edge()` to create and add a new edge
-
-```python
-class Tree:
-    """ Tree, described by its list of edges."""
-    def __init__(self, edgelist):
-        """create a new Tree object from a list of existing Edges"""
-        self.edge = edgelist
-
-    def __str__(self):
-        res = "parent -> child:"
-        for e in self.edge:
-            res += "\n" + str(e.parent) + " " + str(e.child)
-        return res
-
-    def add_edge(self, ed):
-        """add an edge to the tree"""
-        self.edge.append(ed)
-
-    def new_edge(self, parent, child):
-        """add to the tree a new edge from parent to child (node indices)"""
-        self.add_edge( Edge(parent,child) )
-```
-
-after edits to `tree.py`, the class should be reloaded with:
-
-```python
-import importlib
-importlib.reload(tree)
-tre = tree.Tree([e1,e2])
-tre
-print(tre)
-tre.add_edge(e3)
-tre.new_edge(2,4)
-print(tre)
-```
-
 ---
-[previous](notes1110.html) & [next](notes1117.html)
+[previous](notes1108.html) &
+[next](notes1117.html)

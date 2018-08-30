@@ -46,7 +46,7 @@ class Tree:
         childrenset = set(self.node2edge.keys())
         rootset = set(e.parent for e in self.edge).difference(childrenset)
         if len(rootset) > 1:
-            warn("there should be a single root: " + str(rootset))
+            raise Warning("there should be a single root: " + str(rootset))
         if len(rootset) == 0:
             raise Exception("there should be at least one root!")
         self.root = rootset.pop()
@@ -55,7 +55,7 @@ class Tree:
         """takes the index i of a node and returns the list of nodes
         from i to the root, in this order.
         This function is written with a loop.
-        An alternative optional would have been a recursive function:
+        An alternative option would have been a recursive function:
         that would call itself on the parent of i (unless i is the root)"""
         res = []
         nextnode = i
@@ -65,6 +65,12 @@ class Tree:
                 break
             nextnode = self.node2edge[nextnode].parent # grab the parent to get closer to root
         return res
+
+    def get_dist2root(self, i):
+        """take the index i of a node and return the number of edges
+        between node i and the root"""
+        path = self.get_path2root(i)
+        return len(path)-1
 
     def get_nodedist(self, i, j):
         """takes 2 nodes and returns the distance between them:
