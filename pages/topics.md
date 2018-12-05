@@ -18,12 +18,13 @@ description: topic, notes, for each class period
 | 10/15-17| [ssh, scp, tmux](notes1018.html), [install](pythoninstallation.html) and [intro to python](notes1020.html)  |
 | 10/22-24| python: [loops, tests, (im)mutable objects](notes1025.html), [regex](notes1027.html) |
 | 10/29-31| python: [functions, modules](notes1101.html) |
-| 11/5-7  | python: [file io, break/continue](notes1108.html), [dictionaries, running external programs](notes1115.html)] |
+| 11/5-7  | python: [file io, break/continue](notes1108.html), [dictionaries, running external programs](notes1115.html) |
 | 11/12-14| python: [classes and methods](notes1117.html), project intro |
 | 11/19-21| project: in-class group work (thanksgiving recess: 22-24)|
 | 11/26-28| [install](juliainstallation.html) and [intro to julia](notes1206.html), julia [packages](notes1206-juliapackages.html) |
-| 12/3-5  | [julia intro](notes1208.html) con't, [parallel computing](notes1209.html), guest lecture by [Doug Bates](https://github.com/dmbates) |
-| 12/10-12| create a julia package with unit tests, <!-- profiling, --> [job scheduling](notes1215.html): guest lecture by Mike Cammilleri |
+| 12/3-5  | [julia intro](notes1208.html) con't, guest [lecture](notes1205.html) by [Doug Bates](https://github.com/dmbates) |
+| 12/10-12| [parallel computing](notes1209.html), [types & julia packages](notes1210.html) |
+|         | [job scheduling](notes1215.html): guest lecture by Mike Cammilleri |
 |---------|---|
 |         |   |
 {: rules="groups"}

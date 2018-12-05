@@ -3,8 +3,8 @@ layout: page
 title: distributed computing with julia
 description: course notes
 ---
-[previous](notes1208.html) &
-<!-- [next](notes1215.html) -->
+[previous](notes1205.html) &
+[next](notes1210.html)
 
 ---
 
@@ -202,5 +202,5 @@ by(df, [:numrarecategories, :numrareexpected],
 ```
 
 ---
-[previous](notes1208.html) &
-<!-- [next](notes1215.html) -->
+[previous](notes1205.html) &
+[next](notes1210.html)

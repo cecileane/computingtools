@@ -4,7 +4,7 @@ title: intro to julia, con't
 description: course notes
 ---
 [previous](notes1206-juliapackages.html) &
-[next](notes1209.html)
+[next](notes1205.html)
 
 ---
 
@@ -469,4 +469,4 @@ to see that it's hard to look at one's own code just 1 month later.
 
 ---
 [previous](notes1206-juliapackages.html) &
-[next](notes1209.html)
+[next](notes1205.html)

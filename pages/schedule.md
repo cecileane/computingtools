@@ -15,12 +15,21 @@ Will get updated each week, refresh your browser!
 #### Mon 12/10
 
 - [distributed computing](notes1209.html) in julia
-- julia types, and creating a julia package
+- create [new types & julia packages](notes1210.html) with unit tests
+- homework
+  * please fill out evaluations: your voice is important
+  * send group project contributions: see Canvas
+  * peer review of final project: see Canvas for instructions,
+    github issues for providing & receiving comments.
+    If you didn't get the github email: go to github, login,
+    click on "issues" on the top bar, then click on "mentioned" to see all the
+    issues that you were tagged on.
 
 #### Wed 12/5
 
 - guest lecture by Professor [Doug Bates](https://github.com/dmbates):
-  Julia for GWAS (genome-wide association studies) and Mixed Models
+  [Julia for GWAS](notes1205.html)
+  (genome-wide association studies) and Mixed Models
 - homework: final project submission (via a github issue) due R 12/6 11:59pm
 
 #### Mon 12/3

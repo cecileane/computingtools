@@ -4,7 +4,7 @@ title: Julia for GWAS and mixed models
 description: course notes
 ---
 [previous](notes1208.html) &
-<!-- [next](notes1215.html) -->
+[next](notes1209.html)
 
 ---
 
@@ -20,8 +20,8 @@ description: course notes
 - [GWAS](https://en.wikipedia.org/wiki/Genome-wide_association_study) (Genome-Wide Association Studies) data
     - two allele types at `n` SNP (single-nucleotide polymorphism) sites
     - `m` individuals
-    - [Recent arrays](https://en.wikipedia.org/wiki/SNP_genotyping) allow for $n > 10^6$
-    - Some studies also have $m\approx 10^6$ or $> 10^12$ obs.
+    - [Recent arrays](https://en.wikipedia.org/wiki/SNP_genotyping) allow for `n` > 10<sup>6</sup>
+    - Some studies also have `m` ≈ 10<sup>6</sup> or > 10<sup>12</sup> obs.
 
 - 3 possiblities (mm, mM, MM) or missing at each position
 
@@ -51,4 +51,4 @@ Pkg.add(PackageSpec(url="https://github.com/dmbates/BEDFiles.jl", rev="staticsli
 ```
 ---
 [previous](notes1208.html) &
-<!-- [next](notes1215.html) -->
+[next](notes1209.html)
