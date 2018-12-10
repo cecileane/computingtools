@@ -12,6 +12,14 @@ Will get updated each week, refresh your browser!
 
 <p></p>
 
+#### Wed 12/12
+
+- guest lecture by Mike Cammilleri:
+  Job scheduling and Resource Allocation on the Statistics High Performance Computing Cluster
+- see [here](notes1215.html) for a (possibly outdated) reference,
+  and julia example
+- homework for 12/12: peer review and group project contributions
+
 #### Mon 12/10
 
 - [distributed computing](notes1209.html) in julia
