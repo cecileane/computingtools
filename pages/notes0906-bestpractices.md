@@ -7,7 +7,9 @@ description: notes, links, example code and exercises
 
 ---
 
-from [Wilson et al. 2014](http://journals.plos.org/plosbiology/article?id=10.1371/journal.pbio.1001745):
+From
+[Wilson et al. 2014](http://journals.plos.org/plosbiology/article?id=10.1371/journal.pbio.1001745) 
+on "best practices for scientific computing":
 
 1. Write programs for people, not computers
     - A program should not require its readers to hold more than a handful of facts in memory at once
@@ -59,7 +61,8 @@ def test_add():
     assert(abs(add(2.4, 0.1) - 2.5) < EPS)
 ```
 
-Which best practices are shown here?
+Ask yourself: which best practices are shown here?
+(hint: many more than 1)
 
 
 ### Good enough practices in scientific computing
@@ -68,6 +71,17 @@ for all researchers more generally:
 [Wilson et al. 2017](https://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1005510)
 on data management, programming, collaborating with colleagues,
 organizing projects, tracking work, and writing manuscripts.
+
+Of their summary, I would like to emphasize the following points:
+
+4. Project organization
+   - Put each project in its own directory, which is named after the project.
+   - Put text documents associated with the project in the `doc` directory.
+   - Put raw data and metadata in a `data` directory and files generated during
+     cleanup and analysis in a results directory.
+   - Put project source code in the `src` directory.
+   - Put external scripts or compiled programs in the `bin` directory.
+   - Name all files to reflect their content or function.
 
 ---
 [previous](notes0906.html) & [next](notes0906-intro-shell.html)

@@ -7,17 +7,6 @@ description: notes, links, example code and exercises
 
 ---
 
-### survey:
-
-* your name
-* your graduate program and year
-* why do you want to take this course
-  (needs tools x and y for my research / need tools on my CV to apply for job x and y /
-  required / recommended by x / ...)
-* are you auditing, and if so, do you want to join a group for class projects
-* any questions for me
-
-
 ## what the course is about
 
 details on [topic coverage](topics.html)
@@ -59,21 +48,23 @@ details on [topic coverage](topics.html)
       - code
 
 - talk on [reproducible research](https://github.com/kbroman/Talk_ReproRes) by Karl Broman.
-  Slide #12 is so true:
-  [You mostly collaborate with yourself, and me-from-two-months-ago never responds to email."](https://twitter.com/kcranstn/status/370914072511791104)
+  pdf with notes [here](https://www.biostat.wisc.edu/~kbroman/presentations/steps2rr_withnotes.pdf).
+  Slide #14 is so true:
+  [Your closest collaborator is you six months ago, but you don't reply to emails."](https://twitter.com/kcranstn/status/370914072511791104)
 
 ## expectations
 
-- bring your laptop to class every time
+- bring your laptop ~~to class~~ every time
 - very active participation. no practice = no learning.
-    * ask questions
     * try things out, spend time debugging, again and again
-    * help others with their practical roadblocks
+    * ask questions (on Piazza, office hours etc.)
+    * help others with their practical roadblocks (in Piazza etc.)
 - your learning objectives? expectations?
+  fill out start-of-semester survey on Canvas.
 
 ## assignments and grading
 
-see course [description](coursedescription.html#assessments)
+read the syllabus on Canvas.
 
 ## logistics
 
@@ -81,14 +72,14 @@ Your laptop is going to be your slave and best friend. Invest in it!
 
 [Hardware requirement](coursedescription.html#hardware-requirements): Linux or Mac.
 
-- need to use the bash shell (this tool won't change!)
+- need to use the shell, bash or zsh (this tool won't change!)
 - need admin access: to have the freedom to install new software or tweak which compiler
   or Python version (etc.) you system uses.
 - pick an old laptop in your parents' or friends' basement, presumably old and slow.
   Wipe its OS and install some LTS (long term support) release of Ubuntu.
-  Version [18.04.1](http://www.ubuntu.com/download/desktop) requires
+  Version [20.04.1](http://www.ubuntu.com/download/desktop) recommends
     * 2 GHz dual core processor
-    * 2 GB system memory
+    * 4 GB system memory
     * 25 GB of free hard drive space
     * Either a DVD drive or a USB port for the installer media
     * Internet access is helpful
@@ -98,7 +89,7 @@ Your laptop is going to be your slave and best friend. Invest in it!
 
 ## motivating example: data manipulation
 
-Data  manipulation / data cleaning from one of my student's research:
+Data  manipulation & data cleaning from one of my student's research:
 <!-- https://github.com/frupaul/Test-for-SNAQ-by-Reduced-Data-Sample/ -->
 extract various pieces of information from various files
 <!-- https://github.com/frupaul/Test-for-SNAQ-by-Reduced-Data-Sample/tree/master/timeTestResults -->
@@ -170,7 +161,8 @@ Sat Jun 11 17:47:11 2016
 ...
 ```
 
-Task: extract key information from each file, then combine the
+Data cleanaing task, before some downstream analysis:
+extract key information from each file, then combine the
 data points from each pair of files into a summary table like this:
 
 ```
@@ -193,12 +185,21 @@ Timetest12,1,10,50,0.000001,0.00001,0.01,0.1,39416,74437,4,0,0,3452.1753,1790,18
 Timetest13,1,10,100,0.00001,0.00001,0.01,0.1,38112,82736,3,1,1,3439.7857,3131,31456.99
 ```
 
+We want to write code to perform this task
+- to make it reproducible
+- to avoid human errors
+- because we will likely run more analyses and we will likely want to re-do the task again.
+
 ## text editor
 
-I highly recommend [VS Code](https://code.visualstudio.com),
+I **highly** recommend [VS Code](https://code.visualstudio.com),
 for all platforms. To launch VS Code from the command line via `code`,
 Mac users will first need to follow these
 [instructions](https://code.visualstudio.com/docs/setup/mac).
+VS Code is free, it is excellent to maintain a project with many different files
+(e.g. to look up the definition of a function located in a different file,
+or search/replace a variable name in all files within a folder)
+it is fast (even on huge data files), it has lots of plug-ins, etc.
 Alternatives:
 
 - [TextWrangler](http://www.barebones.com/products/textwrangler/download.html) or

@@ -127,7 +127,7 @@ by the way: `git log` uses `less` to view your git history
 now add more edits:
 
 ```shell
-echo "Project started 2018-09-24" >> readme.md
+echo "Project started 2020-09-24" >> readme.md
 git diff
 git commit -a -m "added project info to main readme"
 git log

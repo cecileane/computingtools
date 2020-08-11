@@ -63,7 +63,7 @@ back to the current version of your script with `git checkout master`.
 
 on github: easy to browse a project at any old version,
 really easy at tagged versions:
-[example](https://github.com/UWMadison-computingtools-2018)
+[example](https://github.com/UWMadison-computingtools-2020)
 
 ### branches
 
@@ -116,7 +116,7 @@ git push -u origin readme-changes
 git branch -vv
 ```
 
-on [github](https://github.com/UWMadison-computingtools-2018/zmays-snps):
+on [github](https://github.com/UWMadison-computingtools-2020/zmays-snps):
 the branch will appear, so you can all get it:
 
 ```shell

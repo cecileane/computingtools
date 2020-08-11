@@ -39,21 +39,21 @@ cecile (laptop) -- central (claudia's github) -- claudia (laptop)
 we can: `git push`, `git clone`, `git pull`, `git fetch` (to check before), `git merge`
 
 To illustrate this, I will to create a central repository:
-new repository owned by "UWMadison-computingtools-2018", say. I'll go to
-[github](https://github.com/UWMadison-computingtools-2018), click "New repository",
+new repository owned by "UWMadison-computingtools-2020", say. I'll go to
+[github](https://github.com/UWMadison-computingtools-2020), click "New repository",
 name it "zmays-snps", give you all permission by adding the 'student' team.
 Then back to my shell to link my local repository
 to the new central repo on github:
 
 ```shell
 git remote -v
-git remote add origin git@github.com:UWMadison-computingtools-2018/zmays-snps.git
+git remote add origin git@github.com:UWMadison-computingtools-2020/zmays-snps.git
 git remote -v
 git branch
 git push origin master
 ```
 
-Now let's go back to [github](https://github.com/UWMadison-computingtools-2018/zmays-snps)
+Now let's go back to [github](https://github.com/UWMadison-computingtools-2020/zmays-snps)
 to check! Go check the "network" page to visualize the list of commits
 (in Graphs tab)
 
@@ -77,7 +77,7 @@ first navigate to a directory that is
 
 ```shell
 # you do this, after checking that you are outside of a git repo:
-git clone git@github.com:UWMadison-computingtools-2018/zmays-snps.git
+git clone git@github.com:UWMadison-computingtools-2020/zmays-snps.git
 cd zmays-snps
 git remote -v
 ```
@@ -95,7 +95,7 @@ git log --abbrev-commit --graph --pretty=oneline --all --decorate
 ```
 
 check the update on
-[github](https://github.com/UWMadison-computingtools-2018/zmays-snps);
+[github](https://github.com/UWMadison-computingtools-2020/zmays-snps);
 and pull these changes from the shell:
 
 ```shell
@@ -103,7 +103,7 @@ $ git pull origin master # you doing this
 remote: Counting objects: 5, done.
 remote: Compressing objects: 100% (3/3), done.
 ￼...
-From github.com:UWMadison-computingtools-2018/zmays-snps
+From github.com:UWMadison-computingtools-2020/zmays-snps
 ...
 Fast-forward
  readme.md | 1 +
@@ -144,14 +144,14 @@ Let me and volunteer 2 make changes to the same file, at roughly the same place:
 
 ```shell
 # volunteer 2 does this:
-echo -e ", downloaded 2018-09-26 from\nhttp://maizegdb.org into `/share/data/refgen3/`." >> readme.md
+echo -e ", downloaded 2020-09-26 from\nhttp://maizegdb.org into `/share/data/refgen3/`." >> readme.md
 git commit -a -m "added download info"
 git push origin master
 ```
 
 while I open `readme.md` to change the last line to this:
 
-> We downloaded refgen3 on 2018-09-26.
+> We downloaded refgen3 on 2020-09-26.
 
 then I also commit and push:
 
@@ -186,7 +186,7 @@ I can now edit this file and remove these 3 marks (there may be multiple blocks
 of conflicts, each with these 3 marks). Let me replace both versions with
 some improved information:
 
-  > We downloaded the B73 reference genome (refgen3) on 2018-09-26 from
+  > We downloaded the B73 reference genome (refgen3) on 2020-09-26 from
   > http://maizegdb.org into `/share/data/refgen3/`.
 
 let's continue to follow git's instructions:

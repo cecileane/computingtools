@@ -8,16 +8,16 @@ description: notes, links, example code, exercises
 
 ---
 
-from the [software carpentry introduction](http://swcarpentry.github.io/shell-novice/):
-- due today:
-  [pipes & filters](http://swcarpentry.github.io/shell-novice/04-pipefilter/index.html)
-  * questions?
-  * why does `uniq` only remove adjacent duplicates?
-  * what happens here `wc -l` (how do I get out of this)?
-  * command to count the number of character in "hgsj fdhg akrgwkfsh"?
-
-- start in class:
-  [loops](http://swcarpentry.github.io/shell-novice/05-loop/index.html)
+Go to the [software carpentry introduction](http://swcarpentry.github.io/shell-novice/)
+and do
+- [pipes & filters](http://swcarpentry.github.io/shell-novice/04-pipefilter/index.html)
+  and
+- [loops](http://swcarpentry.github.io/shell-novice/05-loop/index.html)
+  * do ask all your questions as you go through this carpentry:
+    ask others on Piazza, or in office hours.
+  * ask yourself: why does `uniq` only remove adjacent duplicates?
+    what is the advantage?
+  * ask yourself: what happens when we do `wc -l`? why? how do we get out of this?
 
 ---
 
@@ -64,7 +64,7 @@ how to assign a variable:
 *But* `xxx` is a very bad variable name: use some other name instead to
 write your script for a human (yourself in 2 months)
 
-We will skip the section on "Shell Scripts" because we will cover this
+We will skip the section on "Shell Scripts" for now, because we will cover this
 topic differently later (and we will write safe scripts).
 
 ### more on redirection
@@ -72,9 +72,17 @@ topic differently later (and we will write safe scripts).
 ```shell
 ls -d * unknownfile
 ```
-What is this command doing?  
+What is this command doing?
+(hint: do `man ls` to learn about the `-d` option,
+and ask on Piazza if you don't figure it out trying out the code below.)  
 It gives both: some output and some error.
 Let's try to capture the output and the error separately.
+Navigate to a directory in which you:
+- have at least something (at least one file or one subdirectory)
+- do *not* have a file named `unknownfile`
+- do not have files named `outfile` or `errfile` that cannot be overwritten.
+
+Then try this below:
 
 ```shell
 ls -d * unknownfile > outfile

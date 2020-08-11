@@ -7,8 +7,6 @@ description: notes, links, example code and exercises
 
 ---
 
-quick count: shell versus terminal? absolute versus relative path?
-
 GUI (graphical user interface): easy but not reproducible.  
 CLI (command line interface) or REPL (read-evaluate-print loop):
 steep learning curve but reproducible and powerful.  
@@ -18,7 +16,7 @@ The shell is an incredibly powerful tool:
  [Unix is like a chainsaw](http://confreaks.tv/videos/cascadiaruby2011-the-unix-chainsaw).
  Can kill trees, and people.
  The Unix shell can do great things, but power comes with danger: it's unsafe!
-* [example](https://github.com/UWMadison-computingtools-2018/lecture-examples/tree/master/rm-example):
+* [example](https://github.com/UWMadison-computingtools-master/lecture-examples/tree/master/rm-example):
 
 ```shell
 $ rm -rf tmp-data/aligned-reads*
@@ -88,22 +86,6 @@ ls -lrt
 `-t`: ordered by time
 
 Streams process data without storing huge amounts in our computers' memory: very efficient
-
-## let's get started: the bash shell
-
-```shell
-$ echo $SHELL
-/bin/bash
-```
-
-[bash](https://en.wikipedia.org/wiki/Bash_(Unix_shell)) for "Bourne-Again SHell",
-pun on the name of the developer of the original Unix shell, Stephen Bourne.
-
-Go to
-[software carpentry introduction](http://swcarpentry.github.io/shell-novice/)
-and do
-- "Setup" to download the data and open a terminal
-- "Navigating Files and Directories"
 
 
 ---

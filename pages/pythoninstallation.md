@@ -15,7 +15,7 @@ if you don't already have it.
   to install python 3.
 
 - follow instructions from
-  [software carpentry](https://uw-madison-aci.github.io/2018-08-29-uwmadison-swc/#python),
+  [software carpentry](https://uw-madison-datascience.github.io/2020-08-17-uwmadison-swc/#python),
   with Anaconda. Make sure to choose **python 3.x** and not Python 2.7.
   Read below if you want a lighter installation that uses less memory.
 

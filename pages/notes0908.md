@@ -10,19 +10,42 @@ description: notes, links, example code, exercises
 
 ## the Unix shell
 
-from the [software carpentry introduction](http://swcarpentry.github.io/shell-novice/):
-- due today:
-  [setup](http://swcarpentry.github.io/shell-novice/setup.html)
-  to download the data and
-  [navigating files and directories](http://swcarpentry.github.io/shell-novice/02-filedir/index.html)
-  * questions?
-  * volunteer: relative vs absolute path
+Go to
+[software carpentry introduction](http://swcarpentry.github.io/shell-novice/)
+and do
+- [setup](http://swcarpentry.github.io/shell-novice/setup.html)
+  to download the data and open a terminal
 
-- in class:
-  [working with files and directories](http://swcarpentry.github.io/shell-novice/03-create/index.html)
-  * do things on your own laptop. watching ≢ practice. interrupt, ask TA
+After you do the setup and have a terminal open, type `echo $SHELL`.
+You may see this:
 
-summary:
+```shell
+$ echo $SHELL
+/bin/bash
+```
+
+or you may get this:
+
+```shell
+% echo $SHELL
+/bin/zsh
+```
+
+The terminal is the "window" (more or less), while the shell is a program
+(or a programming language, like R and Python are).
+There are several shell programs, `bash` (and `zsh`) being the most common.
+They are almost equivalent.
+
+[bash](https://en.wikipedia.org/wiki/Bash_(Unix_shell)) for "Bourne-Again SHell",
+pun on the name of the developer of the original Unix shell, Stephen Bourne.
+
+Then do:
+- [navigating files and directories](http://swcarpentry.github.io/shell-novice/02-filedir/index.html)
+- [working with files and directories](http://swcarpentry.github.io/shell-novice/03-create/index.html)
+  * do things on your own laptop. watching or reading ≢ practice.
+  * ask others on Piazza, or in office hours.
+
+## summary
 
 - directory structure, root is `/`
 - relative versus absolute paths
@@ -108,11 +131,11 @@ Jenny Bryan
 
 ## typing skills
 
-- quick count: who had keyboarding classes in elementary school?
+- had keyboarding classes in elementary school?
 - it's like talking or walking: it's assumed.
 - take a [test](http://www.typingtest.com/test.html)
 - invest in your typing skills! it will save you time and stress.  
-  allow yourself one week to be slow.
+  allow yourself two weeks to be slow.
 
 ---
 [previous](notes0906-intro-shell.html) &
