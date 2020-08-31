@@ -13,7 +13,7 @@ description: course notes
 `ssh`: secure shell
 
 ```shell
-ssh ane@desk22.stat.wisc.edu # need to authenticate. password: # characters not shown
+ssh ane@stat-remote.stat.wisc.edu # need to authenticate. password: # characters not shown
 hostname
 logout
 hostname # just in case I switch a lot and don't remember
@@ -30,7 +30,8 @@ if yes, information stored in `~/.ssh` folder:
 
 ```shell
 less -S ~/.ssh/known_hosts
-ssh desk22.stat.wisc.edu # login name not needed if same as on local machine
+whoami
+ssh lunchbox.stat.wisc.edu # login name not needed if same as on local machine
 cd private/st679/
 ls
 emacs -nw notes/statservers.md # or nano or vim: no new window. ^X^C to quit emacs.
@@ -49,13 +50,13 @@ github profile.
 machine name and full path on the remote machine. works over ssh.
 
 ```shell
-scp -p ane@desk22.stat.wisc.edu:private/st679/notes/statservers.md notes/
+scp -p ane@stat-remote.stat.wisc.edu:private/st679/notes/statservers.md notes/
 ls -l notes/statservers.md
-scp -r desk22.stat.wisc.edu:private/st679/classroom-repos/hw1/log .
+scp -r stat-remote.stat.wisc.edu:private/st679/classroom-repos/hw1/log .
 ls -l
 ls -l log/
 echo "hi Cecile" > coolfile
-scp coolfile ane@desk22.stat.wisc.edu:private/ # works both directions
+scp coolfile ane@stat-remote.stat.wisc.edu:private/ # works both directions
 ```
 
 slight difference between cp and scp:  
@@ -64,7 +65,7 @@ slight difference between cp and scp:
 
 ```shell
 rm -r log
-scp -r desk22.stat.wisc.edu:private/st679/classroom-repos/hw1/log/ .
+scp -r stat-remote.stat.wisc.edu:private/st679/classroom-repos/hw1/log/ .
 ls
 rm -r log
 cp -r classroom-repos/hw1/log .
@@ -98,12 +99,12 @@ log back in tomorrow to get the results.
 - `nohup`: will catch and ignore this hang-up signal
 
 ```shell
-ssh desk22.stat.wisc.edu
+ssh stat-remote.stat.wisc.edu
 cd private/st679/classroom-repos/lecture-examples/mrbayes-example/
 mb mrBayes-run.nex > screenlog &
 logout
 
-ssh desk22.stat.wisc.edu
+ssh stat-remote.stat.wisc.edu
 ps -u ane | grep mb # gone
 cd private/st679/classroom-repos/lecture-examples/mrbayes-example/
 tail screenlog
@@ -116,7 +117,7 @@ rm -f alignedDNA.nex.* screenlog # clean up
 nohup mb mrBayes-run.nex > screenlog &
 logout
 
-ssh desk22.stat.wisc.edu
+ssh stat-remote.stat.wisc.edu
 ps -u ane | grep mb # still there if lucky
 cd private/st679/classroom-repos/lecture-examples/mrbayes-example/
 ls -l
@@ -175,7 +176,7 @@ tmux attach -t mb-analysis
 # ^a d to detach yet again
 logout
 
-ssh desk22.stat.wisc.edu
+ssh stat-remote.stat.wisc.edu
 tmux list-sessions    # mb-analysis still there
 ps -u ane | grep tmux # still running
 tmux attach
@@ -219,7 +220,7 @@ then detach and check on our session.
 
 ### long jobs on stat.wisc.edu machines
 
-See [here](https://www.stat.wisc.edu/computing-lab/how-perform-long-running-jobs),
+See [here](http://old-www.stat.wisc.edu/computing-lab/how-perform-long-running-jobs),
 where you can replace `screen` by `tmux`.
 
 idea: run a `stashticket` command to maintain the AFS token before starting

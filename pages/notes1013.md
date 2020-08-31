@@ -86,40 +86,67 @@ echo "delete:     ${var/cool}"
 
 ## getting data from the web: wget and curl
 
-`wget` not available by default on Mac: get it using Homebrew:
-`brew install wget`.
+### `wget`
 
-goal: get all lizard data from this
-[dryad repository](http://datadryad.org/resource/doi:10.5061/dryad.mm11q).
-DNA in ".fasta" files, morphology in ".txt" files.
+is not available by default on Mac.
+get it using Homebrew: `brew install wget`.
 
+Example goal:
+get all maize domestication trait data on the "NCRPIS" maize lines,
+from [maizegdb.org](https://www.maizegdb.org/download):
+follow ["FTP-style" download](https://download.maizegdb.org/),
+then folder
+[Maize_Domestication_Traits](https://download.maizegdb.org/Maize_Domestication_Traits/).
 
 ```shell
-mkdir lizard; cd lizard
-wget http://datadryad.org/resource/doi:10.5061/dryad.mm11q # gives link to data files
-ls # new file: dryad.mm11q
-grep "fasta" dryad.mm11q
-grep ".txt" dryad.mm11q
-grep "fasta" dryad.mm11q | wc # 6 fasta files
-wget -r -l 1 -nd --accept-regex '\.fasta|\.txt' http://datadryad.org/resource/doi:10.5061/dryad.mm11q
+mkdir zmays-traits; cd zmays-traits
+wget https://download.maizegdb.org/Maize_Domestication_Traits/
+ls       # new file "index.html", which gives link to data files
+grep -Eo 'href="[^"]+\.csv"' index.html  # links to 6 .csv files
+grep -Eo 'href="[^"]+\.txt"' index.html  #            .txt files
+wget -r -l 1 -nd --accept-regex '\.NCRPIS.*\.txt' https://download.maizegdb.org/Maize_Domestication_Traits/
 ```
 
 `wget` can download files recursively: `-r`, but dangerous (aggressive). put limits with options:
 
 - `-l` to limit the level, or maximum depth: `-l 1` to go only 1 link away
 - `--accept-regex` to limit what's accepted using a regular expression:
-  here files whose names contain `.fasta` or `.txt`.
+  here files whose names contain `.NCRPIS` and `.txt`.
 
 `nd` or `--no-directory`: to not re-create the directory hierarchy  
 lots of other options, like: `--no-parent`, `-O`, `--user`, `--ask-password`, `--limit-rate`
 
-The host may block your IP address if you are downloading too much too fast.
-to avoid: use `--limit-rate=50k` or `-w 1` to wait 1 second between file downloads
+The host may block your IP address if you are downloading too much too fast.  
+To avoid being blocked: use `--limit-rate=50k` or `-w 1` to wait 1 second between file downloads.
 
-`curl` writes to standard output.
+----
 
-`curl http://datadryad.org/bitstream/handle/10255/dryad.56970/cten_16s.fasta?sequence=1`
+### `curl`
 
+is much more common for "scraping the web" than `wget`
+because it can use more protocols and more authentication methods.
+It does not retrieve files recursively, but each individual file request
+can be much more flexible and easier.
+
+From searching the `index.html` page above, we can get the list of
+files we are interested in:
+
+```bash
+$ grep -Eo 'href="[^"]+\.txt"' index.html | grep "\.NCRPIS"
+href="File%20S2.NCRPIS%20BLUEs%20SL.txt"
+href="File%20S3.NCRPIS%20BLUEs%20CL.txt"
+href="File%20S4.NCRPIS%20BLUEs%20KRN.txt"
+```
+
+so we could write a loop to download all these files.
+The first iteration might do this:
+
+```bash
+$ curl "https://download.maizegdb.org/Maize_Domestication_Traits/File%20S2.NCRPIS%20BLUEs%20SL.txt" > 20SL.txt
+```
+
+`curl`
+- writes to standard output
 - can use more protocols, like `sftp`
 - can follows redirected pages with `--location`
 - some options: `-O`, `-o`, `--limit-rate`  

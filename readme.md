@@ -1,4 +1,5 @@
 ## Computing Tools for Data Analytics
-course website, UW-Madison, Statistics 679, Fall 2016
 
-View the course website [here](http://cecileane.github.io/computingtools).
+UW-Madison, Statistics 679 / 992  
+Repo to build the course website, deployed
+[here](http://cecileane.github.io/computingtools).

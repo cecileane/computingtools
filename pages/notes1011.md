@@ -15,14 +15,6 @@ description: course notes
 - [sha checksums](#sha-checksums)
 - a git-aware [shell-prompt](notes1006.html#changing-your-shell-prompt)
 
-### warnings
-
-- do **not** update your github repository by uploading files from the browser: this creates commits that are not on your local laptop repository. If you make changes from the browser, you will have to do a `git pull` the next time you work on your laptop, to pull the changes from github into your local repo.
-
-- git desktop does not always let you control and see everything: prefer the command line, understand things under the hood.
-
-- do not track/commit `.Rhistory` files, or `.DS_Store` files, or temporary files. Be in control of what you track and what you commit.
-
 ### checking out older versions
 
 Let's recover some old version now, *just for one file*,
@@ -42,7 +34,7 @@ git checkout master -- readme.md # back to version from master
 To recover some old version for the *whole* project:
 `git checkout commit-sha` or `git checkout tag-name`.
 Then come back to the latest version on the "master" branch with `git checkout master`.
-Example (do this on your own class notes repo or hw1 repo):
+Practice: do this on your own class notes repo or hw1 repo:
 
 ```shell
 cat readme.md
@@ -67,6 +59,10 @@ really easy at tagged versions:
 
 ### branches
 
+GitHub has a [tutorial](https://guides.github.com/activities/hello-world/)
+with great visuals, on creating repositories, using branches
+and collaborate with each other.
+
 Branches are very useful to easily switch back and forth between different
 versions. Each version can still evolve.
 
@@ -75,9 +71,10 @@ work with the rest of the pipeline --say risky edits to the `readme` file (!):
 
 ```shell
 git pull origin master # pull often! Perhaps you guys added some cool things.
-git branch readme-changes # creates a branch
-git branch # lists the existing branches
-git checkout readme-changes # switches the current branch
+git branch readme-changes # create a branch
+git branch                # list existing branches
+git branch -vv            # also see which "remote" repo each branch might track
+git checkout readme-changes # change current branch
 git branch
 git log --abbrev-commit --graph --pretty=oneline --all --decorate
 ```
@@ -217,7 +214,8 @@ git branch -a -vv
 git log --abbrev-commit --graph --pretty=oneline
 ```
 
-volunteer to merge the `samplescript` branch, push the merge, and delete the branch?
+similarly: merge the `samplescript` branch into `master`,
+push the merge, and delete the `samplescript` branch.
 
 ### some other git subcommands
 
@@ -253,30 +251,100 @@ volunteer to merge the `samplescript` branch, push the merge, and delete the bra
 ### SHA checksums
 
 checksum: quick check to verify that file transfer had no error.  
-simplest idea: add up all bits in file (modulus 2),
-or add up all "nibbles" (modulus 2<sup>4</sup> = 16)  
-hexadecimal code, or digits to count in base 16, from 0 to 15:
-0 (0000), 1, ..., 8 (1000), 9, a, b, c, d, e, f (1111)
 
-SHA = security hash algorithm,
-used by git to guard again data corruption.  
-A small change in the input causes many changes in the SHA value.  
-It is a good idea to record the SHA values of important data files
-as metadata (in readme file).
+- simplest idea: add up all bits in file (modulus 2).
+  example: if the file was made up of these bits
+
+      1000 1010 1100 1110 0110 1011 1100 1000 0001 0101 1001 1111 1011
+
+  then the sum would be 28 modulus 2 = 0, so the "checksum"
+  would be 0. After download, the receiver of the file could
+  check that the sum of the bits that were received was indeed 0.
+  If not: it means that there was an error during transfer.
+  but 2 errors would go unnoticed.
+
+- a little bit more robust:  
+  consider "nibbles" = sets of 4 bits, then
+  add up all nibbles modulus 2<sup>4</sup> = 16.  
+  nibble = half a "byte", which is 8 bits.  
+  human representation of nibbles, to count in base 16: 0-9 then a-f.
+
+  | nibble | number | hexadecimal code |
+  |:------:|:------:|:-----------:|
+  | (base-2 representation) |    | (base-16 representation) |
+  | 0000 |  0 | 0 |
+  | 0001 |  1 | 1 |
+  | 0010 |  2 | 2 |
+  | 0011 |  3 | 3 |
+  | 0100 |  4 | 4 |
+  | 0101 |  5 | 5 |
+  |  ⋯   |  ⋯ | ⋯ |
+  | 1001 |  9 | 9 |
+  | 1010 | 10 | a |
+  | 1011 | 11 | b |
+  |  ⋯   |  ⋯ | ⋯ |
+  | 1111 | 15 | f |
+  |------|----|----|
+  |      |    |    |
+  {: rules="groups"}
+
+  For the file above, its nibbles are:
+  `8 10 12 14 6 11 12 8 1 5 9 15 11` or
+  `8ace6bc8159fb`. The sum is 122 modulus 16 = 10 or "a",
+  to check after download.
+
+SHA = security hash algorithm:
+much better than summing bits or summing nibbles.
+- returns a value of fixed size, regardless of the size of the input
+- a small change in the input causes many changes in the SHA value.
+  example below: a change from "super" to "duper" is hard to notice
+  in the input, but makes the checksum very different and the error
+  very easy to spot.
 
 ```shell
 $ echo "this sentence is super cool" | shasum
 93aff6c8139fff6855797afc8ea7a7513ffabb6f  -
 $ echo "this sentence is duper cool" | shasum
 97c250becdaa49c62721478c7f82d116e1039e0e  -
+```
+
+There are multiple SHA algorithms:
+- MD5 is old (values have 32 nibbles).
+- `shasum` uses SHA-1 by default (values have 40 nibbles).
+- longer SHA values provide more security.
+example: SHA-256 (256 bits → 256/4 = 64 nibbles)
+
+```bash
+$ echo "this sentence is super cool" | shasum -a 256
+473d92e9078dd77bad42d01915ea3e469c5d67b28040b70a0c9cf0c3ce0a2ff3  -
+```
+
+It is a good idea to record the SHA values of important data files
+as metadata (in readme file). example:
+
+```bash
 $ shasum data/seqs/* # copy-paste results in readme file
 $ md5 data/seqs/*    # alternatively: record MD5 checksums
 ```
 
-check [RStudio](https://www.rstudio.com/products/rstudio/download/)
-download page for MD5 checksums: to make sure that what you get
+The [RStudio](https://www.rstudio.com/products/rstudio/download/#download)
+download page has checksums: to make sure that what you get
 on your laptop is the true and uncorrupted thing:
-`md5 RStudio-downloadedfile.zip` and compare with expected MD5 value.
+`shasum -a 256 RStudio-downloadedfile.zip`
+and compare the output with the expected SHA-256 value from the
+RStudio website
+(using the `diff` command of course!).
+
+**SHA and git?**
+
+SHA checksums are used by git to create an identifier for
+each commit. A commit's SHA is calculated from the content of the
+commit (listing what was changed) *and* the header
+(commit message, author, date, etc.).
+
+Conveniently, commits SHAs also guard again data corruption,
+because we can check that the files containing the commits
+do (or don't) have the expected SHA.
 
 ---
 [previous](notes1006.html) &

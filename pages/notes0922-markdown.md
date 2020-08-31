@@ -112,9 +112,9 @@ cd data
 touch seqs/zmays{A,B,C}_R{1,2}.fastq
 ls seqs/
 ls seqs/zmaysB*
-ls zmays[AB]_R1.fastq
-ls zmays[A-B]_R1.fastq
-ls zmaysA_R{1..2}.fastq
+ls seqs/zmays[AB]_R1.fastq
+ls seqs/zmays[A-C]_R1.fastq
+ls seqs/zmaysA_R{1..2}.fastq
 ls -lR
 ```
 

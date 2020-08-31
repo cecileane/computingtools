@@ -8,7 +8,13 @@ description: course notes
 
 ---
 
-examples of commands not used earlier --see summary [here](notes0908.html)
+- earlier [summary](notes0908.html#summary) of useful commands
+- [commands](#useful-shell-commands) we don't tend to use everyday
+  (but perhaps we should):
+  `cut`, `sort`, `column`, `basename`, `dirname`, `tree`
+- stream editor: [sed](#stream-editor-sed)
+
+## useful shell commands
 
 ### cut
 
@@ -24,10 +30,12 @@ cut -f 1 Mus_musculus.GRCm38.75_chr1.bed | sort | uniq # check chromosome 1 only
 cut -f 2 Mus_musculus.GRCm38.75_chr1.bed | head -n 3
 ```
 
-(for what these rows mean: each one is for a genomic "feature",
-same as in the associate `.gtf` file -- check they have the same number of lines
-except for lines of metadata, and see more info in `.gtf`:
-`less -S Mus_musculus.GRCm38.75_chr1.gtf`)
+Each row is for a genomic "feature",
+same as in the associate `.gtf` file.
+We can check the `.bed` and `.gtf` files have the same number of lines
+except for lines of metadata (how?)
+quick look at `.gtf` file:
+`less -S Mus_musculus.GRCm38.75_chr1.gtf`
 
 other ways to use options for `cut`:
 
@@ -81,12 +89,12 @@ sort -k1,1 -k2,2n example.bed
 sort -k1,1 -k2,2nr example.bed
 sort -k1,1 -k2,2n -r example.bed
 sort -k1,1 -k2,2n -c example.bed
-sort -t, -nc Mus_musculus.GRCm38.75_chr1_bed.csv
-sort -t, -n Mus_musculus.GRCm38.75_chr1_bed.csv | head
+sort -t, -nc Mus_musculus.GRCm38.75_chr1_bed.csv       # assumes GNU sort
+sort -t, -n Mus_musculus.GRCm38.75_chr1_bed.csv | head # GNU sort
 sort -t, -nr Mus_musculus.GRCm38.75_chr1_bed.csv | head
 ```
 
-exercise: extract all the features (and counts) for gene "ENSMUSG00000033793",
+exercise: extract & count all the features (e.g. "exon") for gene ENSMUSG00000033793
 from file `Mus_musculus.GRCm38.75_chr1.gtf`.
 [1 line = 1 feature, the feature name is in the 3rd column]
 <!--
@@ -135,7 +143,7 @@ basename -s ".txt" "relative/path/to/myfile.txt"
 basename -s "le.txt" "relative/path/to/myfile.txt"
 ```
 
-## tree
+### tree
 
 freebie: `tree directory_name` shows the content of a folder
 in a tree-like format (I do love trees).

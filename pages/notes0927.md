@@ -63,6 +63,7 @@ let's create a repository from our corn SNPs project
 cd ~/Documents/private/st679/zmays-snps
 ls -lR
 git init # initialize repo: creates .git/
+ls -a
 git status
 git add readme.md data/readme # git now tracks these files
 git status
@@ -180,8 +181,10 @@ touch .gitignore
 echo "data/seqs/*.fastq" >> .gitignore
 cat .gitignore
 git status # fastq files not listed anymore. but need to track .gitignore
-git commit -a -m "added .gitignore, to ignore large fastq data files"
+git add .gitignore
+git commit -m "added .gitignore, to ignore large fastq data files"
 git status # all good
+git log
 ```
 
 ### using older commits to fix mistakes
@@ -191,6 +194,7 @@ echo "todo: ask sequencing center about adapters" > readme.md
 cat readme.md # oops
 git status    # git tells us how to undo our change
 git checkout -- readme.md # to checkout 'readme.md' from the last commit
+git restore readme.md     # same, with more recent version of git
 cat readme.md # yes!
 git status
 ```

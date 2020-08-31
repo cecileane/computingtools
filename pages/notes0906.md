@@ -68,7 +68,8 @@ read the syllabus on Canvas.
 
 ## logistics
 
-Your laptop is going to be your slave and best friend. Invest in it!
+Your laptop is going to be your minion and best friend.
+Invest in it!
 
 [Hardware requirement](coursedescription.html#hardware-requirements): Linux or Mac.
 
