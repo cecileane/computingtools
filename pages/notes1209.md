@@ -8,6 +8,18 @@ description: course notes
 
 ---
 
+parallel computing can mean 2 things:
+
+- distributed computing: separate memory domains (safe),
+  using multiple cores on same machine or on *different* machines
+- multi-threading: multiple cores on the same machine, all sharing memory
+  (unsafe?!). typically more complex to use.
+
+In Julia, [multi-threading](https://julialang.org/blog/2019/07/multithreading/)
+is much more recent.
+
+## distributed computing
+
 - run things on multiple processes, separate memory domains
 - process providing the interactive prompt: `id` 1
 - "workers": processes used for parallel operations
@@ -40,8 +52,8 @@ pmap(i -> println("I'm worker $(myid()), working on i=$i"), 1:10)
 end
 ```
 
-`pmap` is to be preferred when each operation is long,  
-`@distributed for` is better when each operation is short
+`pmap` is to be preferred when each operation is not very fast,  
+`@distributed for` is better when each operation is very fast
 
 issue: each worker has its own memory domain, for safety
 
@@ -100,8 +112,6 @@ with more documentation
 
 ```julia
 @everywhere begin
-  using Pkg
-  Pkg.activate("juliaenv")
   using Distributions
   using SharedArrays
 end
@@ -183,8 +193,32 @@ say `julia -p 4` and then:
 
 ```julia
 include("runsimulations.jl")
+```
 
+You may get an error if the necessary packages have been defined in a
+non-default environment: workers would complain that they don't know about
+packages they are supposed to use.  
+The easiest way to give the environment to workers is the following:
+define a shell variable `JULIA_PROJECT`, to be the path
+to your environment (that is, path to the folder with the appropriate
+`Project.toml` and `Manifest.toml`.)
+Re-using an environment used earlier in this course:
+
+```bash
+export JULIA_PROJECT="~/Documents/private/st679/julia" # adapt this for you
+julia -p 4
+julia> include("runsimulations.jl")
+```
+
+then look at simulation results:
+
+```julia
 hcat(pearson, qlog)
+
+combine(groupby(df, [:numrarecategories, :numrareexpected]),
+  :pval_pearson => (x -> mean(x .< .05)) => :pearson,
+  :pval_qlog    => (x -> mean(x .< .05)) => :qlog)
+
 quantile(p_pearson, 0.05)
 quantile(p_qlog, 0.05)
 
@@ -194,11 +228,6 @@ ggplot(df, aes(x=:pval_pearson)) + geom_histogram() +
   facet_grid(R"numrareexpected~numrarecategories")
 ggplot(df, aes(x=:pval_qlog))    + geom_histogram() +
   facet_grid(R"numrareexpected~numrarecategories")
-
-by(df, [:numrarecategories, :numrareexpected],
-   d->quantile(d.pval_pearson,.05))
-by(df, [:numrarecategories, :numrareexpected],
-   d->quantile(d.pval_qlog,   .05))
 ```
 
 ---

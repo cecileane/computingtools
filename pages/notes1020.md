@@ -12,10 +12,12 @@ description: course notes
 - [install python](pythoninstallation.html) first
 - "Programming with Python" from the
 [software carpentry workshop](http://swcarpentry.github.io/python-novice-inflammation/):
-  * [setup](http://swcarpentry.github.io/python-novice-inflammation/setup/)
+  * [setup](https://swcarpentry.github.io/python-novice-inflammation/setup.html)
     to download the data
-  * first section
-    [analyzing patient data](http://swcarpentry.github.io/python-novice-inflammation/01-numpy/index.html).
+  * sections:
+    1. [python fundamentals](https://swcarpentry.github.io/python-novice-inflammation/01-intro/index.html)
+    2. [analyzing patient data](https://swcarpentry.github.io/python-novice-inflammation/02-numpy/index.html)
+    3. [visualizing tabular data](https://swcarpentry.github.io/python-novice-inflammation/03-matplotlib/index.html)
     <!-- through paragraph "not all functions have input" -->
   * software carpentry's
     [python reference](http://swcarpentry.github.io/python-novice-inflammation/reference)
@@ -44,18 +46,18 @@ first: basic python interpreter, *not* the notebook
 ```shell
 cd swc-python/data
 $ python # or `winpty python` for git bash users on Windows
-Python 3.7.0 (default, Jun 28 2018, 07:39:16)
-[Clang 4.0.1 (tags/RELEASE_401/final)] :: Anaconda, Inc. on darwin
+Python 3.8.3 (default, Jul  2 2020, 11:26:31)
+[Clang 10.0.0 ] :: Anaconda, Inc. on darwin
 Type "help", "copyright", "credits" or "license" for more information.
 >>> 1+2
 3
->>> quit()
+>>> quit() # or just type ^D: control and D at the same time
 $ head -n 2 inflammation-01.csv
 0,0,1,3,1,2,4,7,8,3,3,3,10,5,7,4,7,7,12,18,6,13,11,11,7,7,4,6,8,8,4,4,5,7,3,4,2,3,0,0
 0,1,2,1,2,1,3,2,2,6,10,11,5,9,4,4,7,16,8,6,18,4,12,5,12,7,11,5,11,3,3,5,4,4,5,5,1,1,0,1
 ```
 
-The integrated terminal is great is VS Code,
+The integrated terminal is great in VS Code,
 to send commands from a file to the terminal smoothly.
 
 ```shell
@@ -63,13 +65,16 @@ touch myscript.py
 code myscript.py
 ```
 
-then install the python extension in VS Code
-(and click on 'reload' VS Code),
-write your python code in file `myscript.py`,
-open the command palette,
-write and click 'Python: Create Terminal', start `python`
-from the correct folder in that terminal,
-then send your commands with Shift-Enter (for instance)
+then within VS Code:
+- install the python extension
+  (you may need to click on 'reload' VS Code),
+- select your Python interpreter: see it on the status bar near the bottom left,
+  click to see option & pick the conda installation
+- write your python code in file `myscript.py`,
+- open the command palette (Ctrl+Shift+P on Linux, Command+Shit+P on Mac),
+- write and click 'Python: Start REPL' to start `python`
+- then send your commands from your script file to be executed
+  with Shift-Enter.
 
 python code:
 
@@ -90,15 +95,14 @@ print('weight in kilograms is now:', weight_kg, 'and weight in pounds is still:'
 quit()
 ```
 
-last line: does not work with python, requires an "interactive" python
-like ipython
+`%whos`: does not work with a basic python,
+requires an "interactive" python like ipython
 
 ```
-ipython
 $ ipython
-Python 3.7.0 (default, Jun 28 2018, 07:39:16)
+Python 3.8.3 (default, Jul  2 2020, 11:26:31)
 Type 'copyright', 'credits' or 'license' for more information
-IPython 6.5.0 -- An enhanced Interactive Python. Type '?' for help.
+IPython 7.16.1 -- An enhanced Interactive Python. Type '?' for help.
 
 In [1]: 1+2
 Out[1]: 3
@@ -106,27 +110,54 @@ Out[1]: 3
 In [2]: 3*5
 Out[2]: 15
 
-In [3]: quit()
-$
+In [3]: weight_kg = 100.0
+
+In [4]: %whos
+Variable    Type     Data/Info
+------------------------------
+weight_kg   float    100.0
+
+In [5]: quit()
 ```
 
-now let's use the jupyter lab (notebook otherwise).
-ipython notebook #1: [download](../assets/python/swcarpentry1.ipynb)
+### jupyter notebooks
 
-to use it:
+<!-- ipython notebook #1: [download](../assets/python/swcarpentry1.ipynb) -->
 
-- save it in a convenient folder, such as in the same folder where
-  you got the software carpentry data for this module
-- from this directory, run: `jupyter notebook`, which will open
-  a browser. Alternatively, install `jupyterlab` like this:
-  `conda install -c conda-forge jupyterlab`, then run jupyter like this:
-  `jupyter lab` (has many more features than the "notebook").
+- fantastic for data analysis projects, to do an analysis then
+  to share with collaborators & show to stakeholders: a notebook contains
+  * code
+  * output, including graphs
+  * any comments and text, formatted with markdown syntax
+
+- **not** good for python functions or for python code that will
+  need to be re-used, such as for a script. For example,
+  if you write code to parse some input file & create an output file
+  with a different format, this code might need to be called
+  as a script to be applied many times to many files.
+  Then, it's best to use a basic python intepreter (not a notebook)
+  to develop and test this code.
+
+ways to use notebooks:
+
+1. straight with `jupyter notebook`,
+  which will open a new window in your browser.
+  when done, type `^C` in your terminal to shut down the notebook.
+2. integrated in a larger enviroment,
+   for many more features than the "notebook":
+   * install `jupyterlab` like this:
+     `conda install -c conda-forge jupyterlab`, then
+   * run jupyter with `jupyter lab`
+   * when done, type `^C` in your terminal to shut down the lab.
+3. within VS Code with the "Python extension". It's pretty seamless,
+   no browser, no `^C` at the end, integrated in the same environment
+   with other files in the project: I recommend it.
 
 about jupyter:
 
 - [blog](http://arogozhnikov.github.io/2016/09/10/jupyter-features.html?utm_content=bufferb0c6b&utm_medium=social&utm_source=twitter.com&utm_campaign=buffer) showing lots of features of IPython notebooks, like key bindings.
 - for **Ju**lia **Py**thon and **R**
-- can run many many more "kernels" than just Python --like Julia
+- can run many more "kernels" than just Python --like Julia
 - integrate a shell, editor for notebooks, kernels, etc.
 - learn key shortcuts to talk to jupyter
 

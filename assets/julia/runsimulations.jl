@@ -1,6 +1,16 @@
+#=
+if non-default environment, do this in the shell first:
+export JULIA_PROJECT="/path/to/environment"
+after done: unset this shell variable with:
+unset JULIA_PROJECT
+
+packages to add beforehand: CSV, DataFrames, Distributions
+=#
+
 @everywhere begin
-  using Pkg
-  Pkg.activate("juliaenv")
+  # using Pkg; Pkg.activate("/path/to/environment")
+  # line above: doesn't quite work with julia v1.5.2
+  # use the JULIA_PROJECT shell variable instead, if non-default environment
   using Distributions
   using SharedArrays
 end

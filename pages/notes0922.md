@@ -136,7 +136,9 @@ MANPATH="/usr/local/opt/gnu-sed/libexec/gnuman:$MANPATH"
 We need lots of practice on this!
 For help: `man re_format`,
 get an explanation of your expression (and debug it)
-on [regexp101](https://regex101.com) or [debuggex](https://www.debuggex.com)
+on [regexp101](https://regex101.com) or
+[debuggex](https://www.debuggex.com),  
+and a nice [cheatsheet](https://www.keycdn.com/support/regex-cheatsheet)
 
 <!-- http://v4.software-carpentry.org -->
 

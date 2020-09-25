@@ -8,11 +8,12 @@ description: course notes
 
 ---
 
-
-done at home before today: software carpentry workshop's
-[analyzing patient data](http://swcarpentry.github.io/python-novice-inflammation/)
-and
-[repeating actions with loops](http://swcarpentry.github.io/python-novice-inflammation/02-loop/)
+sections 4-7 from the "Programming with Python"
+[software carpentry](http://swcarpentry.github.io/python-novice-inflammation/):
+- [loops](https://swcarpentry.github.io/python-novice-inflammation/04-loop/index.html)
+- [lists](https://swcarpentry.github.io/python-novice-inflammation/05-lists/index.html)
+- using data from [multiple files](https://swcarpentry.github.io/python-novice-inflammation/06-files/index.html)
+- [making choices](https://swcarpentry.github.io/python-novice-inflammation/07-cond/index.html)
 
 ## concepts summary
 
@@ -68,8 +69,7 @@ int(4.9)
 
 - a list of lists is not the same as an array. `[1,2]` to create a list.
 
-do section 3: [storing multiple values in lists](http://swcarpentry.github.io/python-novice-inflammation/03-lists/)
-see ipython notebook #1: [download](../assets/python/swcarpentry1.ipynb)
+<!-- see ipython notebook #1: [download](../assets/python/swcarpentry1.ipynb) -->
 
 ### mutable vs immutable objects
 
@@ -192,14 +192,30 @@ important concepts:
 - scope of variables
 - local namespace
 
-### conditions
-
-do software carpentry workshop's section 5:
-[making choices](http://swcarpentry.github.io/python-novice-inflammation/05-cond/)
+### conditions (making choices)
 
 `==`, `<`, `>`, `not`, `and`, `or`.  
 anything *other* than `False`, 0, `None`, empty string or empty list
-is considered `True` in a boolean context.
+is considered `True` in a boolean context.  
+try this:
+
+```python
+a = None # try again with a = "abc", "", [1,2,3], [], True, False, 0, 1, 18
+if a:
+    print("a was true")
+else:
+    print("a was false")
+```
+
+very cool: `and` and `or` are **short-circuit** operators:
+- false `and` whatever = false, so why evaluate this "whatever"
+- true `or` whatever = true, so why evaluate "whatever"?
+
+example use, where "whatever" is not even a boolean:
+```python
+num = -3 # change this to 5, say, to see what happens
+num > 0 or print("num should be positive, but here it's" + str(num))
+```
 
 ### tuples
 
@@ -319,6 +335,15 @@ print('here is mystring.strip(): "' + mystring.strip() + '"')
 print('here is mystring.rstrip(): "' + mystring.rstrip() + '"') # right strip (or tRailing) only
 "     abc\n \n\t ".strip()
 ```
+
+`join` to concatenate multiple string items from a list
+into a single string:
+
+```python
+mylist = ["AA","BB","CC"]
+"coolseparator".join(mylist)
+```
+
 ### some useful modules
 
 numpy, time, matplotlib.pyplot, glob, re, sys,

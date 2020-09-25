@@ -7,6 +7,9 @@ description: course notes
 [next](notes1018.html)
 
 ---
+- [awk](#quick-text-processing-awk)
+- [parameter expansion](#parameter-expansion)
+- [wget](#getting-data-from-the-web-wget-and-curl) and [curl](#curl)
 
 ## quick text processing: awk
 
@@ -56,12 +59,33 @@ awk '/Lypla1/ { feature[$3] += 1 };
     print k "\t" feature[k] }' Mus_musculus.GRCm38.75_chr1.gtf  | column -t
 ```
 
-last example:
+last example above:
 
 - two pattern-action pairs separated by `;`
 - new variable `feature` introduced: associative array.
   like list but indexed by keys (dictionaries in Python & Julia, hashes in Perl)
 - `for` loop, new variable `k` inside.
+
+If we need multiple commands, they need to be
+separated by `;`. Consider a file like this:
+
+```bash
+$ cat myfile
+number1 = 1234 and number2 = 1324
+number1 = 999 and number2 = 1324
+```
+awk can count how many times number1 < 1000,
+and how many times number2 > number1:
+```bash
+awk '
+  BEGIN{ count1 = 0; count2 = 0 };
+  {
+   if ($3 < 1000) count1++;
+   diff = $7 - $3;
+   if (diff > 0) count2++;
+  }
+  END{ print count1 "," count2 }' myfile
+```
 
 ---
 

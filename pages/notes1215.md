@@ -7,9 +7,7 @@ description: course notes
 
 ---
 
-> These notes are based on Mike Cammilleri's guest lecture on 2018-12-12:
-> anything wrong, inaccurate or obsolete is my fault!
-> --Cécile
+<!-- notes were first based on Mike Cammilleri's guest lecture on 2018-12-12 -->
 
 jump to
 - what is [slurm](#slurm-and-the-statistics-hpc-cluster)
@@ -26,14 +24,18 @@ jump to
 ## slurm and the statistics HPC cluster
 
 high performance computing cluster:
-- head node: `lunchbox.stat.wisc.edu`
+- 2 head nodes: `lunchbox` and `jetstar` , both `.stat.wisc.edu`
 - 13 compute nodes (called `marzano` etc.), each with 24 CPUs * 2 hybrid threads
   = 48 threads each (sometimes people would say 48 "cores")
+  and more (GPU node, storage nodes)
 - a ton of memory
 
-[Instructions](http://www.stat.wisc.edu/services/hpc-cluster1/about)
-for our Stat department system (check the menu on the right
-to get an account and for the user's guide).
+[Instructions](https://kb.wisc.edu/stat/internal/page.php?id=106361)
+for our Stat department system (requires a netID).
+(see more general help
+[here](https://kb.wisc.edu/stat/internal/page.php?id=105902)
+and older
+[examples](https://stat.wisc.edu/users-guide/submitting-jobs/tutorials-and-examples/))
 
 [slurm](https://slurm.schedmd.com): simple linux utility for resource management
 - the CHTC on campus uses slurm too for their high performance cluster
@@ -75,7 +77,7 @@ to run the R script `myRstuff.r` in batch mode:
 #SBATCH -t 60:00
 #SBATCH --mem-per-cpu=1000M
 
-module load R/R-3.5.0
+module load R/R-4.0.1
 R CMD BATCH --nosave myRstuff.r
 ```
 
@@ -99,7 +101,8 @@ The `module` line loads software that is properly installed for the cluster,
 in `/workspace/software/` (not on AFS in particular), and loads the correct
 path to that software and its libraries.
 If we wanted to run a python script, we would do
-`module load python/python3.6.4` for instance.
+`module load python/python3.6.7` for instance.
+Do `module avail` to see what modules are available.
 
 To run the script:
 
@@ -137,7 +140,8 @@ many CPUs available *all* on the same node and at the same time.
 another new option above: `-p long` to ask for the "long" partition of the cluster.
 Nodes (machines) are divided into various partitions,
 each with its own configuration: to allow different priorities of users;
-see more with `sinfo` below. by default, if we didn't specify a partition,
+see more with `sinfo` [below](#main-slurm-commands).
+by default, if we didn't specify a partition,
 our job would go in the `debug` partition.
 
 other example to run an **array** of jobs:
@@ -190,8 +194,8 @@ sbatch echo_submit.sh
 
 for more on resource allocations, such as node/task/CPU/core/threads,
 or number of tasks and number of CPUs per tasks:
-see the
-[user's guide](http://www.stat.wisc.edu/services/hpc-cluster1/users-guide-allocating-resources).
+read
+[this](https://kb.wisc.edu/stat/internal/page.php?id=106413).
 
 <!--
 ```shell
@@ -215,21 +219,21 @@ Matlab using the parallel tool kit would use options correctly.
 `sinfo` displays current "partitions" and idle, busy, down, up states.  
 partition = group of computers
 
-- "short" partition (default): 2 days limit (this is quite long actually!)
-  <!-- 2 nodes (= 2 "marzano" servers) -->
-- "long" partition: 8 days limit <!-- , 4 nodes -->
+- "debug" partition (default): 2 hours limit
+- "short" partition: 4 days limit (this is quite long actually!)
+  <!-- 3 nodes (= 3 "marzano" servers) -->
+- "long" partition: 8 days limit
 - other partitions listed for various other research groups or
   resource levels
 
 ```shell
 $ sinfo
 PARTITION AVAIL  TIMELIMIT  NODES  STATE NODELIST
-debug*       up    2:00:00      1    mix marzano01                # mix: some jobs are running
-short        up 2-00:00:00      3    mix marzano[02-04]
-long         up 8-00:00:00      8    mix marzano[05-08,10-13]
-long         up 8-00:00:00      1   idle marzano09                # idle: all cores available
-hipri        up 5-00:00:00     11    mix marzano[02-08,10-13]     # high priority: won't be nice to others
-hipri        up 5-00:00:00      1   idle marzano09
+debug*       up    2:00:00      1   idle marzano01      # idle: all cores available
+short        up 4-00:00:00      3    mix marzano[02-04] # mix: some jobs are running
+long         up 8-00:00:00      9    mix marzano[05-13]
+gpu          up 14-00:00:0      1   idle gpu02
+hipri        up 5-00:00:00     12    mix marzano[02-13] # high priority: won't be nice to others
 ```
 <!-- darwin       up   infinite      9   idle darwin[00-06,12-13] -->
 
@@ -239,19 +243,21 @@ hipri        up 5-00:00:00      1   idle marzano09
 ```shell
 $ squeue
              JOBID PARTITION     NAME     USER ST       TIME  NODES NODELIST(REASON)
-    6813866_[5-10]      long   int.sh    hsong PD       0:00      1 (Resources)     # waiting for resources
-   6813873_[12-20]     short   int.sh    hsong PD       0:00      1 (Resources)
-     6813978_[1-9]      long jobArray       ke PD       0:00      1 (Priority)      # has priority over other jobs
-           6813979     debug finish.s       ke PD       0:00      1 (Dependency)
-    6813987_[1-11]      long Opti11.s  tzuhung PD       0:00      1 (Priority)
-    6813980_[7-11]     debug Opti10.s  tzuhung PD       0:00      1 (Resources)
-           6813451      long singlejo lijieliu  R   16:09:29      1 marzano12       # R = running
-        6813873_11     short   int.sh    hsong  R      23:22      1 marzano04
-        6813859_30     short  main.sh    hsong  R    1:57:54      1 marzano04
-         6813866_4      long   int.sh    hsong  R    2:03:13      1 marzano11
-        6813859_29     short  main.sh    hsong  R    2:08:36      1 marzano03
-        6813859_28     short  main.sh    hsong  R    2:19:04      1 marzano03
-        ...
+           1002004     debug   elnet1    saeid PD       0:00      1 (PartitionTimeLimit) # PD = pending: waiting for resources
+     1375816_[1-3]     debug combined     smin PD       0:00      1 (DependencyNeverSatisfied)
+           1375817     debug answer_a     smin PD       0:00      1 (Dependency)
+               ...
+  1519371_[73-666]     short    0.003   shengw PD       0:00      1 (Resources)
+   1519409_[1-666]      long     0.05   shengw PD       0:00      1 (Priority) # has priority over other jobs
+        1477676_27      long      ppr  fanchen  R 1-19:12:02      1 marzano05 # R = running
+       1517717_460      long      iGP  tzuhung  R    2:28:58      1 marzano10
+       1517717_462      long      iGP  tzuhung  R    2:25:09      1 marzano11
+               ...
+       1517717_503      long      iGP  tzuhung  R      33:06      1 marzano09
+        1519371_72     short    0.003   shengw  R      38:47      1 marzano03
+               ...
+        1519371_38     short    0.003   shengw  R      58:37      1 marzano04
+        1519371_37     short    0.003   shengw  R      58:54      1 marzano04
 ```
 
 `scontrol` to see info on currently running jobs  
@@ -298,12 +304,14 @@ Other notes:
   the appropriate number of cores with `#SBATCH -c xxx`
 - in the slurm script, it can be handy to redefine your home with
   `export HOME=/workspace/username`.
+<!--
 - to use your preferred editor (e.g. VS Code) on the remote server:
   try sshfs (links for [Ubuntu](https://help.ubuntu.com/community/SSHFS)
   or [Mac](http://stuff-things.net/2015/05/20/fuse-and-sshfs-on-os-x/))
+  or: https://code.visualstudio.com/docs/remote/ssh
+-->
 
 ## srun: to diagnose issues
-
 
 how do I know that my job has the resources it need?
 why is my job failing?
@@ -330,7 +338,8 @@ exit
 `pty` = pseudo terminal
 
 `printenv` prints the environment variables:
-regular environment variables plus all others set by slurm.  
+regular environment variables plus all others set by slurm,
+like `SLURM_JOB_PARTITION=debug` `SLURMD_NODENAME=marzano01` etc.  
 Alternative to above, to see variables defined
 by slurm when a submit script is run: `srun --pty printenv`
 
@@ -345,7 +354,6 @@ on "marzano05", it would be great to run bash on that machine with
 `srun --pty -w marzano05 /bin/bash`
 but no longer works
 -->
-
 
 ## example to run a bunch of julia scripts
 
@@ -366,15 +374,15 @@ arrayID = parse(Int, ARGS[1])
 # ... function definitions ...
 rep, samplesize, nrarecat, mu = arrayID_to_parameters(arrayID, Nreps)
 # ...
-# run the simulation. use arrayID as seed: will be different for each simulation
-pearson, qlog, p_pearson, p_qlog = onesimulation(samplesize, nrarecat, mu, arrayID)
+# run simulation. use arrayID as seed: will be different for each replicate
+pearson, gstat, p_pearson, p_gstat = onesimulation(samplesize, nrarecat, mu, arrayID)
 
 # save the result in tiny csv-formatted file
 # (later, all these files will be concatenated with "cat")
 outputfile = joinpath(resultdirectory, "simulation_" * @sprintf("%04d", arrayID) * ".csv")
 open(outputfile, "w") do g
   write(g, "$arrayID,$rep,$samplesize,$nrarecat,$mu,") # input
-  write(g, "$pearson,$qlog,$p_pearson,$p_qlog\n")      # output
+  write(g, "$pearson,$gstat,$p_pearson,$p_gstat\n")    # output
 end
 ```
 
@@ -415,7 +423,7 @@ export JULIA_DEPOT_PATH="/workspace/ane/.julia"
 echo "slurm task ID = $SLURM_ARRAY_TASK_ID"
 
 # launch Julia script, using Julia in /workspace/ and with full paths:
-/workspace/software/julia-1.0.1/bin/julia /workspace/ane/st679simulations/onesimulation.jl $SLURM_ARRAY_TASK_ID 20
+/workspace/software/julia-1.5.1/bin/julia /workspace/ane/st679simulations/onesimulation.jl $SLURM_ARRAY_TASK_ID 20
 ```
 
 It will run the julia script [`onesimulation.jl`](../assets/julia/onesimulation.jl)
@@ -444,13 +452,13 @@ scp onesimulation.jl simulations_submit.sh username@lunchbox.stat.wisc.edu:/work
 
 ```shell
 export JULIA_PKGDIR="/workspace/ane/.julia"
-/workspace/software/julia-1.0.1/bin/julia onesimulation.jl 14 2
+/workspace/software/julia-1.5.1/bin/julia onesimulation.jl 14 2
 ```
 
 **run slurm quickly** (step 2)
 
 - run the slurm script for a few trials only, to run the julia script
-  2 times only (not 240 times yet) by editing to `#SBATCH --array=1-2`
+  2 times only (not 240 times yet) by editing to `#SBATCH --array=3-4`
   and make slurm `echo` the julia command, *not* run it. After editing
   the slutm submit script, run it:
 
@@ -466,10 +474,31 @@ squeue
 - monitor the jobs for these first few trials, predict the running time
   for the full 240 julia runs.
 
+Here is an example email from a small run with `--array=3-4`:
+
+    Job ID: 1519914
+    Array Job ID: 1519914_4
+    Cluster: marzano
+    User/Group: ane/ane
+    State: COMPLETED (exit code 0)
+    Cores: 1
+    CPU Utilized: 00:01:38
+    CPU Efficiency: 70.00% of 00:02:20 core-walltime
+    Job Wall-clock time: 00:02:20
+    Memory Utilized: 44.01 MB
+    Memory Efficiency: 88.02% of 50.00 MB
+
+based on this report: change slurm options to use a max of 15 minutes only
+and bump memory usage to 70MB perhaps (instead of the default 50M) for safety:
+```
+#SBATCH -t 15:00
+#SBATCH --mem-per-cpu=70M
+```
+
 **run slurm** for the full simulation (step 3)
 
 edit the script again to `#SBATCH --array=1-240` and
-run the full array of 240 jobs, and sumit like in step 2 above:
+run the full array of 240 jobs, and submit like in step 2 above:
 
 ```shell
 sbatch simulations_submit.sh
@@ -487,30 +516,78 @@ to coordinates (or indices) in a matrix or in a higher dimentional array.
 
 Below is a simple example (with 1 less dimension than in the simulation file)
 with 3 parameters of interest, taking between 2 or 3 values each, for a
-total of 2\*2\*3 = 12 combinations. A linear ID for parameter combinations
-would run from 1 to 12. But what does combination 5 correspond to, for example?
+total of 3×2×2 = 12 combinations. A linear ID for parameter combinations
+would run from 1 to 12. But what does combination 10 correspond to, for example?
 
 ```julia
-samplesizes = [30, 1000] # parameters of interest
-nrarecats = [1, 2]
-mus = [0.1, 1., 2.]
+julia> mus = [0.1, 1., 2.]; # parameters of interest: 3 values for mu
+julia> samplesizes = [30, 1000]; # 2 values for samplesize
+julia> nrarecats = [1, 2];       # 2 values for nrarecats
 
-I = CartesianIndices( (2,2,3) )
-for i in 1:6
- @show I[i]
-end
-A = reshape(12:-1:1, (2,2,3))
-for i in 1:6
-  @show A[I[i]]
-end
-A[5]
-A[1,1,2]
-I[5]
-I[5].I
+julia> indices = CartesianIndices( (3,2,2) ) # like a 3-dimensional array
+3×2×2 CartesianIndices ...
+[:, :, 1] =
+ CartesianIndex(1, 1, 1)  CartesianIndex(1, 2, 1)
+ CartesianIndex(2, 1, 1)  CartesianIndex(2, 2, 1)
+ CartesianIndex(3, 1, 1)  CartesianIndex(3, 2, 1)
 
-samplesizes[I[5].I[1]] # combination 5, parameter 1
-nrarecats[I[5].I[2]]   # combination 5, parameter 2
-mus[I[5].I[3]]         # combination 5, parameter 3
+[:, :, 2] =
+ CartesianIndex(1, 1, 2)  CartesianIndex(1, 2, 2)
+ CartesianIndex(2, 1, 2)  CartesianIndex(2, 2, 2)
+ CartesianIndex(3, 1, 2)  CartesianIndex(3, 2, 2)
+
+julia> for i in 1:6
+        @show i, indices[i]
+       end
+(i, indices[i]) = (1, CartesianIndex(1, 1, 1))
+(i, indices[i]) = (2, CartesianIndex(2, 1, 1))
+(i, indices[i]) = (3, CartesianIndex(3, 1, 1))
+(i, indices[i]) = (4, CartesianIndex(1, 2, 1))
+(i, indices[i]) = (5, CartesianIndex(2, 2, 1))
+(i, indices[i]) = (6, CartesianIndex(3, 2, 1))
+
+julia> A = reshape(112:-1:101, (3,2,2))
+3×2×2 ...
+[:, :, 1] =
+ 112  109
+ 111  108
+ 110  107
+
+[:, :, 2] =
+ 106  103
+ 105  102
+ 104  101
+
+julia> for i in 1:6
+         println("A[indices[$i]] = $(A[indices[i]])")
+       end
+A[indices[1]] = 112
+A[indices[2]] = 111
+A[indices[3]] = 110
+A[indices[4]] = 109
+A[indices[5]] = 108
+A[indices[6]] = 107
+
+julia> A[10]
+103
+
+julia> A[1,2,2]
+103
+
+julia> indices[10]
+CartesianIndex(1, 2, 2)
+
+julia> indices[10].I
+(1, 2, 2)
+
+julia> mus[indices[10].I[1]]         # combination 10, parameter 'mu'
+0.1
+
+julia> samplesizes[indices[10].I[2]] # combination 10, parameter 'samplesize'
+1000
+
+julia> nrarecats[indices[10].I[3]]   # combination 10, parameter 'nrarecat'
+2
 ```
 
 ---

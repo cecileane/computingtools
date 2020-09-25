@@ -11,16 +11,17 @@ description: course notes
 
 jump to:
 
-- [syntax](#syntax-overview) overview: functions, docstrings, tests, loops
+- [syntax](#syntax): for functions, docstrings, tests, loops
 - [scope](#scope-of-variable-names) of variables
 - [list comprehensions](#list-comprehension)
-- type [stability](#type-stability)
+- type [stability](#type-stability): for more faster code
 - read & write to [files](#using-files)
 - [regular expressions](#regular-expressions)
 - running [external programs](#running-external-programs)
-- [misc](#cool-functions): to re-use memory, find things in arrays
+- how to be more [efficient](#how-to-be-more-efficient) with memory
+- [finding things](#finding-things) in arrays
 
-## syntax overview
+## syntax
 
 docstring *just* before the function (nothing else in between):
 
@@ -43,11 +44,11 @@ x=5; y=6.2
 if x>6 || y>6
   println("x or y is >6")
 end
-x>6 || error("x is not greater than 6: can't continue")
-x>6 || @error "oops, x<=6. error, but not fatal (under standard logging level)"
-x>6 || @warn "oops, x not >6, is this normal?"
-x<6 && @info "checked: x is less than 6"
 x<6 && @debug "message to help debug: x is less than 6"
+x<6 && @info "checked: x is less than 6"
+x>6 || @warn "oops, x not >6, is this normal?"
+x>6 || @error "oops, x<=6. error, but not fatal (under standard logging level)"
+x>6 || error("x is not greater than 6: can't continue")
 
 function test(x,y)
   if x ≈ y # type \approx then TAB. Same as isapprox(x,y).
@@ -77,94 +78,119 @@ for i in 1:10^9 # this a Range object: very small
     continue
   end
   # above, same as: i<3 && continue
-  println("\t2i=", 2i) # * not needed
+  println("\t2i=", 2i) # * not needed between 2 and i
   i<6 || break
 end
-i # not defined!!
+i # not defined
+```
+
+related to logging macros `@debug` etc.,
+`@show`: very useful to debug scripts
+
+```julia
+a = [0 18 0 0; 0 0 0 18]
+@show a;
 ```
 
 ## scope of variable names
 
+example above: `i` was local to the `for` loop,
+so undefined after we exited the loop.
+
 ```julia
-nmax=100_000
+while true
+  n = 1
+  @show n
+  break
+end
+n # undefined: was local to `while`, unknown outside
+for n in 1:2
+  newvar = n
+  @show n
+end
+n      # undefined: was inside `for` only
+newvar # undefined
+
+nmax=10_000
 n=0 # in REPL: n is in our main's global scope
 while n<nmax
   print("n=",n,"\r") # \r to "return carriage" only: re-write on same line
-  n += 1 # error: n not defined!
+  n += 1 # n, from the outside scope, can be modified inside loop
 end
-while n<nmax
-  print("n=",n,"\r") # \r to "return carriage" only: re-write on same line
-  global n += 1 # error: n not defined!
-end
+n # 10000
 ```
 
-local scopes cannot modify a variable in a global scope
-(unless explicitly said to do so)
-
-- global in the main session (REPL), or module
-- local inside functions, type definitions,
-  `for`, `while`, `try/catch/finally`, list comprehension
+- global scope: main session (REPL) or module
+- local scope: inside functions, list comprehension
+  `for`, `while`, `try/catch/finally`, type definitions
 - `if` statements: **no** new scope
 
-our `while` loop wanted to modify `n`, which is in our main session's
-scope (global): not permitted by default.
-
-before trying this below, quit and re-open Julia.
-
-```julia
-for j in 1:3
-  newvar = j
-end
-j
-newvar
-j=5
-for j in 1:3
-  newvar = j
-  println("j=",j)
-end
-j
-newvar
-for j in 1:3
-  global newvar = j
-end
-j
-newvar
-```
-
-we can use a variable from an outside scope, so long as
-we don't modify it:
+local scopes cannot modify a variable in a global scope  
+unless explicitly said to do so with `global`:
+but this bad practice -- *don't* do it! example below.
 
 ```julia
-n=10
-for i in 1:3
-  println("i+n=",i+n) # n is used, not modified: all good
-end
-for i in 1:3
-  n=i # triggers new variable n, local to "for" loop
-  println("i=",i," and n=",n)
-end
-n
-for i in 1:3
-  n += 1 # error! no local "n" to start doing n = n+1
-  println("i=",i," and n=",n)
-end
-function foo(n)
-  # n is an argument: belongs in the function's scope, which is local
-  for i in 1:3
-    n += 1
-    println("i=",i," and n=",n)
+n = 10_000
+function foo(n)   # "n" binds to new local variable
+  function bar(x) # bar has access to `n` from foo, outside of bar
+    n += x        # and can even modify it
   end
-  @show @isdefined i
-  @show @isdefined n
-  return(n)
+  bar(5)
+  @show @isdefined x # x undefined outside of `bar`
+  y = 3
+  @show n
+  return nothing
 end
-foo(0)
+foo(200)
+n # global variable: old value 10_000
+y # undefined: was inside `foo`
+
+function foo(n)
+  # "n" binds to new local variable
+  function bar(x)
+    global n += x # will modify global "n", not "n" local to `foo`
+    @show n
+  end
+  @show n
+  bar(5) # shows value of global n
+  @show n
+  return nothing
+end
+foo(200) # n = 200 before bar, n = 10005 during bar, n = 200 after bar
+n # 10005: modified by bar, not by foo directly
 ```
+conclusion: don't use `global` variables within functions.
+
+tricky: `for i in xxx` creates a new local binding for `i`,  
+but an assignment `i=value` doesn't always
+
+```julia
+j=50
+for j in 1:3 # j local to loop: because binding defined by comprehension
+  @show j
+end
+j # 50
+
+j=50
+for u in 1:3 # u local
+  j=u        # j from outside of loop this time: because assigned a value
+  @show j
+end
+j # 3
+```
+
+<!-- Warning: behavior above is because REPL. Same behavior in non-interactive
+session so long as these snippets are within a function (see notes/scope.jl).
+Different behavior if snippets in a file, outside of any other local scope -->
 
 ## list comprehension
 
+same as in Python, except for last example below: we can build a matrix
+
 ```julia
-paramvalues = [10.0^i for i in -3:2]
+i = 50
+paramvalues = [10.0^i for i in -3:2] # new local scope for i
+i # still 50: phew!
 [v^2 for v in paramvalues if v >= 0.1]
 h = Dict("xtolrel"=>0.01, "xtolabs"=>0.001, "Nfail"=>50)
 h["xtolrel"]
@@ -214,28 +240,38 @@ typeof(sumofsins2(0))
 
 and compare their running time:
 
-```
-@time sumofsins1(100_000);
-@time sumofsins2(100_000);
+```julia
+@time sumofsins1(10);
+@time sumofsins2(10);
 
-@time [sumofsins1(100_000) for i in 1:1000];
-@time [sumofsins2(100_000) for i in 1:1000];
+using BenchmarkTools
+@benchmark sumofsins1(10) # mean time: 12.332 ns
+@benchmark sumofsins2(10) # mean time:  1.755 ns
 ```
 
+such an easy fix to make the function 7 times faster:
+just initialize `r=0.0` instead of `r=0` here!!  
 Julia has tools to diagnose type instability problems:
 
 ```julia
-@code_warntype sumofsins2(3)
 @code_warntype sumofsins1(3)
+@code_warntype sumofsins2(3)
 ```
 
 ## using files
+
+open with "w"rite permission:
 
 ```julia
 f = open("newfile.txt", "w") # f = stream, or file handle
 write(f, "hello\n")
 close(f)
-typeof(f)
+
+typeof(f)       # IOStream
+isa(f, IO)      # true. IO for Input - Output
+typeof(stdout)
+isa(stdout, IO) # true
+write(stdout, "hello\n"); # writes to stdout. return the number of bytes written
 ```
 
 better: use `do` block to close the file even if
@@ -243,10 +279,18 @@ an error occurred with what you do with it
 (similar to `with open() as` in Python):
 
 ```julia
-open("newfile.txt", "a") do g
+open("newfile.txt", "a") do g # "a" to append
   write(g, "world!\n")
 end
 typeof(g) # g undefined
+```
+
+look at our new file, in shell mode:
+```julia
+shell> cat newfile.txt
+hello
+world!
+
 ```
 
 (More generally, `do` blocks provide a way to define a complex
@@ -264,9 +308,9 @@ tools to read a file (from file handle/stream `f`):
 ```julia
 open("newfile.txt") do f # open for reading by default
   for line in eachline(f)
-    line = strip(line)
-    m = match(r"([lw]+)o", line)
-    if m != nothing
+    line = strip(line) # strips "line" from spaces on both ends
+    m = match(r"([lw]+)o", line) # regular expression: see below
+    if m !== nothing
       print(m.match, ": ", m.captures[1],"\n")
     end
   end
@@ -280,40 +324,43 @@ main functions: `occursin`, `match`, `replace`
 
 ```julia
 typeof(r"([lw]+)o")
-m = match(r"([lw]+)o", "Hello world") # first one only
-m.captures
+m = match(r"([lw]+)o", "Hello world") # first match only, if any
+m.match    # what matched: llo
+m.captures # what was captured in between parentheses: ll
 m = match(r"([lw]+)o", "Ho")
 m === nothing # no match
-occursin(r"([lw]+)o", "Hello world") # true or false
-m = match(r"([lw]+)o", "Hello world", 7)    # start search at index 7
-m = match(r"([lw]+)o"i, "HelLo world", )    # case Insensitive
-m = match(r"([lw]+)[lo]", "Hello world")  # greedy
-m = match(r"([lw]+?)[lo]", "Hello world") # non-greedy
+occursin( r"([lw]+)o", "Hello world") # true or false
+m = match(r"([lw]+)o", "Hello world", 7)  # start search at index 7
+m = match(r"([lw]+)o"i, "HelLo world", )  # case Insensitive
+m = match(r"([lw]+)[lo]",  "Hello world") # greedy:     llo
+m = match(r"([lw]+?)[lo]", "Hello world") # non-greedy: ll
 ```
 to search for all matches:
 ```julia
 for m in eachmatch(r"([lw]+)([lo])", "Hello world")
   @show m
-  @show m.captures
-  @show m.offsets
+  @show m.captures # what was captured in between ()
+  @show m.offsets  # where each captured thing starts
   println()
 end
 ```
 if we only want to know the number of matches and where they start:
 ```julia
-[m.offset for m in eachmatch(r"([lw]+)([lo])", "Hello world")]
+[m.offset for m in eachmatch(r"[lw]+[lo]", "Hello world")]
 ```
 
 to search & replace:
 ```julia
 replace("I love python", "python" => "julia")
 replace("Hello world", r"([lw]+)([lo])" => s"\2\1" )
+typeof(s"\2\1") # SubstitutionString{String}
 ```
 
 to inspect an object of unfamiliar type:
 ```julia
 nfields(m)
 fieldnames(typeof(m))
+dump(m) # could be too much, or too cryptic
 ```
 
 ## running external programs
@@ -324,14 +371,12 @@ backticks, and functions `run`, `read` and `pipeline`:
 a = `date +%B`
 typeof(a)  # Cmd
 m = run(a) # does not capture output
-m
-m == nothing
+m          # Process
 m = read(a) # captures output as an array of bytes. byte 0x4e is 0100 1110
 m
 String(m)
-run(`ps -u ane | grep julia`)            # error: | illegal
-run(pipeline(`ps -u ane`, `grep julia`)) # pipe by julia
-run(pipeline(`ps -u ane`, `grep julia`));
+run(`ps -u ane | grep julia`)             # error: | illegal
+run(pipeline(`ps -u ane`, `grep julia`)); # pipe by julia. output not captured
 run(pipeline(`ps -u ane`, `grep julia`, "outfile"));
 ```
 check with `cat outfile` in shell mode
@@ -350,22 +395,15 @@ to call a Julia script from the shell:
 to pass command-line arguments to the script.
 usage/behavior similar to the `argparse` Python module.
 
-## cool functions
+## how to be more efficient
 
-`@show` macro: very useful to debug scripts
+whenever possible: **re-use memory**. why?
+- decrease memory usage and
+- reduce running time, by reducing garbage collection time ("gc time" below):
 
+note the difference beween `a = ...` and `a[:]=...` or `a .= ...`
 ```julia
-a=Array{Int8}(undef,2,4)
-fill!(a,0)
-a[2,4]=18; a[1,2]=18
-a
-@show a;
-```
-
-`@view` and important details to **re-use memory**
-
-note the difference beween `a = ...` and `a[:]=...`
-```julia
+a = Int8[0 18 0 0; 0 0 0 18]
 b = a
 a = [1 2 3 4; 5 6 7 8]
 b # has not changed: new memory was allocated for "a" above
@@ -373,33 +411,37 @@ b = a
 a[:] = [0 0 0 0; 2 2 2 2]
 b # b has changed: memory for "a" was reused above
 a .+= 1
-b
+b # b has changed: .+= re-uses memory
+a .= [10 20 30 40; 50 60 70 80]
+b # b has changed: .= re-used memory (vectorized = assignment, term by term)
 ```
-`.+=` reuses memory for `a` despite not using `a[:]`
+`.+=` and `.=` reuse memory for `a` despite not using `a[:]`
 because vectorized operation
 
-```
-@view a[:,3]
+`@view`: to access memory without copying values
+
+```julia
+@view a[:,3] # 3 columns, same memory as in a: values are NOT copied
 fill!(view(a, :, 3), 0)
 a
-b
+b # both a and b have changed: the view used the original memory
 ```
 
 `map!`, `map`
 
 ```julia
 map(x->2x, a)
-a
+a # no change
 map!(x->2x, a, a)
-a
+a # was modified in-place
 b = Array{Int64}(undef,3,4) # too big for a
 map!(x->2x, b, a)
-b
-a
+b # sub-matrix was modified in-place
+a # intact
 ```
 
-why reuse memory? decrease memory usage and
-save garbage collection time ("gc time" below):
+use "bang" functions whenever possible & appropriate.
+example:
 
 ```julia
 function foo(n)
@@ -407,7 +449,7 @@ function foo(n)
   b = sort(a)
   c = reverse(b)
   d = round.(c, digits=2)
-  e = unique(d)
+  e = unique(d) # 5 separate arrays total. only the last one is returned
   return e
 end
 function foo!(n)
@@ -415,42 +457,49 @@ function foo!(n)
   sort!(a)
   reverse!(a)
   map!(x -> round(x, digits=2), a, a)
-  unique!(a)
+  unique!(a) # the same memory slots are used 5 times
   return a
 end
 using Random
 Random.seed!(1234); res1 = foo( 5)
 Random.seed!(1234); res2 = foo!(5)
-res1 == res2
+res1 ==  res2  # true: these 2 vectors have the same values
+res1 === res2 # false: these 2 vectors don't "point" to the same address
 
-@time [foo( 100) for i in 1:1000];
-@time [foo!(100) for i in 1:1000];
-
+@time foo( 1000); # 0.000072 seconds (21 allocations: 37.828 KiB)
+@time foo!(1000); # 0.000058 seconds (1 allocation: 7.938 KiB) # about 5 times less memory used
 using BenchmarkTools
-@benchmark foo( 100)
-@benchmark foo!(100)
+@benchmark foo( 1000) # mean time: 55.573 μs (7.77% GC)
+@benchmark foo!(1000) # mean time: 45.190 μs (1.16% GC)
 ```
+
+note the lower time spent "garbage collecting" (GC)
+and the lower memory usage (fewer KiB) by `foo!`.
+
+## finding things
 
 `findall`, `findfirst`, `findnext`, `findmax!`, `findlast`
 
 ```julia
 b = [false,true,false,true,true]
-findall(b)
-findfirst(b)
+findall(b)   # vector of indices
+findfirst(b) # index or `nothing`
 b = zeros(Bool,5)
-findall(b)
-c = findfirst(b)
-c === nothing
+findall(b)   # found nothing: vector of length 0
+c = findfirst(b) # found `nothing`
+isnothing(c)
 ```
 
 works on 2d or bigger arrays too,
 and to find other things than `true` values:
 
 ```julia
+a = [20 40 0 80; 100 120 0 160]
 iszero.(a)
 findall(!iszero, a)
-findall(x -> x==1, a) # anonymous function x -> ...
-findall(y -> y==4, a) # 4 not found: empty vector
+findall(x -> x==20, a)  # anonymous function x -> ...
+findall(isequal(20), a) # same
+findall(y -> y==4, a)   # 4 not found: empty vector
 findfirst(iszero, a)
 a[CartesianIndex(1,3)]
 c = findfirst(x -> x==4, a)
@@ -459,7 +508,7 @@ c === nothing
 
 <!--
 things I would have liked to cover with Julia:
-- try/except/finally and their scope
+- try/catch/finally and their scope
 - create new exceptions
 - class inheritance
 

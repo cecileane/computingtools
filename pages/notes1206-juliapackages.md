@@ -10,76 +10,73 @@ description: course notes
 
 jump to:
 - [environments](#environments) and adding packages
-- [using](#using-packages) packages
+- [using](#using-packages) packages, with data frames & plotting example
 - package [RCall](#package-rcall-and-the-r-mode) and the R mode
-- [other](#other-great-packages) packages
+- [Pluto](#pluto-notebooks) notebooks
+- [other](#other-great-packages) great packages
 
 ### environments
 
 Julia's package manager is centered around environments.
-By default, we use the `v1.0` environment, whose information
-is in `~/.julia/environments/v1.0/`
+By default, we use the `v1.5` environment, whose information
+is in `~/.julia/environments/v1.5/`
 
-```shell
-shell> ls ~/.julia/environments/v1.0/
+```julia
+shell> ls ~/.julia/environments/v1.5/
 Manifest.toml	Project.toml
+shell> cat ~/.julia/environments/v1.5/Project.toml   # what I already installed
+shell> less ~/.julia/environments/v1.5/Manifest.toml # detailed version info
 ```
 The file `Project.toml` lists which packages (or julia version)
-need to be used, and which exact versions.
+need to be used, `Manifest.toml` lists which exact versions.
 I will create a new environment for myself for this class,
 which can be useful if we want to develop a new package
 separately from an environment where I might want to use Julia
 as a "simple user".
 
-I created a new directory `juliaenv` within my directory
-for the class. From this `juliaenv/`, start julia, enter the
+I created a new directory `julia` within my directory
+for the class. From this `julia/`, start julia, enter the
 "pkg" mode by typing `]`, then do this to install the
-[MixedModels](http://dmbates.github.io/MixedModels.jl/stable/) package:
+[MixedModels](https://juliastats.org/MixedModels.jl/stable/) package:
 
 ```julia
-(v1.0) pkg> activate .
+(@v1.5) pkg> activate .
+Activating new environment at `~/Documents/private/st679/julia/Project.toml`
 
-(juliaenv) pkg> status
-    Status `~/Documents/private/st679/juliaenv/Project.toml`
-  (empty environment)
+(julia) pkg> status
+Status `~/Documents/private/st679/julia/Project.toml` (empty project)
 
-(juliaenv) pkg> add MixedModels
-  Updating registry at `~/.julia/registries/General`
-  Updating git-repo `https://github.com/JuliaRegistries/General.git`
- Resolving package versions...
- Installed Showoff ────────── v0.2.1
- ...
- Installed MixedModels ────── v1.1.1
-  Updating `~/Documents/private/st679/juliaenv/Project.toml`
-  [ff71e718] + MixedModels v1.1.1
-  Updating `~/Documents/private/st679/juliaenv/Manifest.toml`
-  [dce04be8] + ArgCheck v1.0.0
+(julia) pkg> add MixedModels
+   Updating registry at `~/.julia/registries/General`
+   Updating git-repo `https://github.com/JuliaRegistries/General.git`
+  Resolving package versions...
+  ...
+  Installed MixedModels ──────── v3.1.0
+  ...
+Updating `~/Documents/private/st679/julia/Project.toml`
+  [ff71e718] + MixedModels v3.1.0
+Updating `~/Documents/private/st679/julia/Manifest.toml`
+  [4c555306] + ArrayLayouts v0.4.10
   ...
   [8dfed614] + Test
   [cf7118a7] + UUIDs
   [4ec0a83e] + Unicode
-  Building SpecialFunctions → `~/.julia/packages/SpecialFunctions/fvheQ/deps/build.log`
-  Building CodecZlib ───────→ `~/.julia/packages/CodecZlib/DAjXH/deps/build.log`
+   Building TimeZones → `~/.julia/packages/TimeZones/fr1IP/deps/build.log`
 
-(juliaenv) pkg> status
-    Status `~/Documents/private/st679/juliaenv/Project.toml`
-  [ff71e718] MixedModels v1.1.1
+(julia) pkg> status
+Status `~/Documents/private/st679/julia/Project.toml`
 
-(juliaenv) pkg> status --manifest
-    Status `~/Documents/private/st679/juliaenv/Manifest.toml`
-  [dce04be8] ArgCheck v1.0.0
+(julia) pkg> status --manifest
+Status `~/Documents/private/st679/julia/Manifest.toml`
+  [4c555306] ArrayLayouts v0.4.10
   ...
-  [a93c6f00] DataFrames v0.14.1
-  [9a8bc11e] DataStreams v0.4.1
-  [864edb3b] DataStructures v0.14.0
-  [31c24e10] Distributions v0.16.4
-  [38e38edf] GLM v1.0.1
+  [38e38edf] GLM v1.3.11
   ...
-  [e1d29d7a] Missings v0.3.1
+  [ff71e718] MixedModels v3.1.0
   ...
-  [2913bbd2] StatsBase v0.25.0
-  [4c63d2b9] StatsFuns v0.7.0
-  [3eaba693] StatsModels v0.3.1
+  [2913bbd2] StatsBase v0.33.2
+  [4c63d2b9] StatsFuns v0.9.5
+  [3eaba693] StatsModels v0.6.15
   ...
   [4ec0a83e] Unicode
 ```
@@ -88,16 +85,17 @@ press backspace to go back to the julian mode.
 
 Later, in a different session started from any other
 directory, we can use the environment we created earlier
-by providing the path to our folder `juliaenv/`:
+by providing the path to our folder `julia/`:
 
 ```julia
-(v1.0) pkg> activate st679/juliaenv
+(v1.5) pkg> activate st679/julia
+ Activating environment at `~/Documents/private/st679/julia/Project.toml`
 
-(juliaenv) pkg> status
-    Status `~/Documents/private/st679/juliaenv/Project.toml`
-  [ff71e718] MixedModels v1.1.1
+(julia) pkg> status
+Status `~/Documents/private/st679/julia/Project.toml`
+  [ff71e718] MixedModels v3.1.0
 
-julia> using MixedModels
+julia> using MixedModels # first-time compilation can take a while!
 [ Info: Precompiling MixedModels [ff71e718-51f3-5ec2-a782-8ffcbfa3c316]
 
 help?> LinearMixedModel
@@ -114,32 +112,38 @@ search: LinearMixedModel GeneralizedLinearMixedModel
     ...
 ```
 
+by the way: great tutorials on julia and mixed models
+[here](https://repsychling.github.io/tutorial.html)
+
 ### using packages
 
 install packages in pkg mode:
 ```julia
-(juliaenv) pkg> add RDatasets # to import data sets defined in R packages
-(juliaenv) pkg> add DataFrames
-(juliaenv) pkg> add CSV
-(juliaenv) pkg> add StatPlots
-(juliaenv) pkg> add Plots
+(julia) pkg> add RDatasets # to import data sets defined in R packages
+(julia) pkg> add DataFrames
+(julia) pkg> add CSV
+(julia) pkg> add StatsPlots
+(julia) pkg> add Plots
+(julia) pkg> status # to check what package(s) you can use
 ```
 
 then in julian mode:
 ```julia
 using RDatasets
 using DataFrames
-using Plots
-using StatPlots
+# using Plots
+using StatsPlots
 
 iris = dataset("datasets", "iris")
 head(iris)
 ncol(iris)
 nrow(iris)
 describe(iris)
-iris[:,5] # 5th column. will create a copy in the future
-iris[5]   # 5th column, no copy
-iris[:Species] # by name
+iris[:,5] # 5th column: copy -> no danger of modifying the iris data frame
+iris[!,5] # 5th column: no copy -> can modify iris since vectors are mutable
+iris[5]   # 5th column: no copy -- but deprecated
+iris[:Species] #        no copy -- but deprecated
+iris.Species
 scatter(iris[:SepalLength], iris[:SepalWidth], group = iris[:Species])
 @df iris scatter(:SepalLength, :SepalWidth, group=:Species,
    legend = :topleft,
@@ -155,8 +159,9 @@ scatter(iris[:SepalLength], iris[:SepalWidth], group = iris[:Species])
 
 for plots, see many options from
 [StatsPlots](https://github.com/JuliaPlots/StatPlots.jl)
-and hopefully soon
-[GGPlots](https://github.com/JuliaPlots/GGPlots.jl).
+and
+[Gadfly](http://gadflyjl.org/stable/)
+for an equivalent to [ggplot2](https://ggplot2.tidyverse.org) in R.
 
 The [Interact](https://github.com/JuliaGizmos/Interact.jl)
 package is super cool too to add interactive widgets to plots,
@@ -187,16 +192,12 @@ about the
 first install the package: do `]` to switch to pkg mode
 
 ```julia
-(juliaenv) pkg> add RCall
-(juliaenv) pkg> status
-    Status `.../st679/juliaenv/Project.toml`
-  [6e4b80f9] BenchmarkTools v0.4.1
-  [a93c6f00] DataFrames v0.14.1
-  [ff71e718] MixedModels v1.1.1
-  [91a5bcdd] Plots v0.21.0
-  [6f49c342] RCall v0.13.0
-  [ce6b1742] RDatasets v0.6.1
-  [60ddc479] StatPlots v0.8.1
+(julia) pkg> add RCall
+(julia) pkg> status
+Status `~/Documents/private/st679/julia/Project.toml`
+  ...
+  [6f49c342] RCall v0.13.9
+  ...
 ```
 
 to use this fantastic `RCall` package:
@@ -223,10 +224,10 @@ and now we can stick to julian mode only, but use the
 functions imported from ggplot, right from julia:
 
 ```julia
-?qplot
-a = 1:10         # range
-c = (10:-1:1).^2 # array. note .^ to vectorize ^
-qplot(a,c) # quick plot with ggplot2, using julia objects
+?ggplot
+using RDatasets
+using DataFrames
+iris = dataset("datasets", "iris") # julia data set
 ggplot(iris, aes(x=:SepalLength, y=:SepalWidth, color=:Species)) +
   geom_point()
 ggsave("iris.pdf")
@@ -237,15 +238,31 @@ ggplot(iris, aes(x=:SepalLength, y=:SepalWidth, color=:PetalLength)) +
 note 2 things above:
 - the argument `na.rm` in an R function,
   but the **dot notation** is used for accessing an object's fields
-  (or module variable or function etc.).
+  (or module variable or function etc.) in julia.
   solution: use the `var""` macro from RCall
 - `y~x` or `~x` will produce an object of class formula in R,
   but not in julia. solution: use the `R""` macro from RCall
 
+## Pluto notebooks
+
+```julia
+using Pluto
+Pluto.run()
+```
+
+then follow instructions, like:
+
+    Opening http://localhost:1234/?secret=T3BDrOY9 in your default browser... ~ have fun!
+    Press Ctrl+C in this terminal to stop Pluto
+
 ## other great packages
 
-[PyCall](https://github.com/JuliaPy/PyCall.jl), with `@pyimport` macro
-to import python modules and use them within julia
+- use [JuliaHub](https://juliahub.com/ui/Packages) to discover
+  packages on a topic of interest, access package documentation,
+  and more
+- [PyCall](https://github.com/JuliaPy/PyCall.jl), with `@pyimport` macro
+  to import python modules and use them within julia
+- [Flux](https://fluxml.ai/Flux.jl/stable/) for machine learning
 
 ---
 [previous](notes1206.html) &

@@ -210,7 +210,7 @@ short-circuit evaluation with `||` and `&&`: convenient, and *the order is impor
   We can do "zero arguments or argument 1 is a file" without causing
   an error, but there could be an error if we did
   "argument 1 is a file or zero arguments".
-- "A or B": B is not evaluated if A is false: the result would be false anyway.
+- "A and B": B is not evaluated if A is false: the result would be false anyway.
 
 
 Let's add a second, optional argument to our `headtail.sh` script:

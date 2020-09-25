@@ -15,8 +15,9 @@ jump to:
 - [types](#types)
 - [(im)mutable](#immutable-types) types
 - [abstract types](#abstract-types)
-- [JIT](#compiled-just-in-time-jit) compiled: fast, type declaration not needed  
-  multiple "methods" for the same function
+- [JIT](#compiled-just-in-time-jit) compiled: fast, type declaration not needed
+- [multiple dispatch](#multiple-dispatch): multiple "methods"
+  for the same function name
 - [view](#view-source-code) source code
 
 ### modes
@@ -77,7 +78,7 @@ h = Dict("blue"=>10, "green"=>20)
 
 julia is **1-indexed** (unlike Python, like R)  
 convention: functions with a bang `!` modify one or more of their arguments.
-Respect it!
+Respect it when you define your own functions!
 
 ```julia
 b = [1,6,3,2]; # ; suppresses screen output
@@ -110,19 +111,16 @@ x=2^63-1 # upper limit for Int64: 1 bit for sign and 63 bits of 1
 typemax(Int64)
 x*2      # wrong! overflow
 ```
-quasi-object-oriented: new types can be defined.  
-types have fields, but no methods: functions have multiple methods instead
---more below.
 
 ### (im)mutable types
 
-mutable: arrays, composite types (typically)  
+mutable: arrays  
 immutable: numbers, tuples, strings
 
 ### abstract types
 
 abstract types are used to define broader classes,
-see this [figure](https://commons.wikimedia.org/wiki/File:Type-hierarchy-for-julia-numbers.png)
+see this [figure](https://en.wikibooks.org/wiki/Introducing_Julia/Types#/media/File:Julia-number-type-hierarchy.svg)
 from
 [here](https://en.wikibooks.org/wiki/Introducing_Julia/Types#Type_hierarchy):
 
@@ -169,7 +167,7 @@ code_native(addone, (Int,))
 code_native(addone, (Float64,))
 ```
 
-by the way, we can vectorize a function by addind a `.` just before
+to vectorize a function: add a `.` just before
 the opening parenthesis, or just before the symbol for `+` etc.:
 ```julia
 addone.([1,2,7,9])
@@ -180,20 +178,27 @@ log.(10,[1,2.71,10]) # 10 recycled: all logs in base 10
 log.([2,10], [4,10])
 ```
 
-Julia uses the type of the arguments to infer which compiled version to run:
-multiple dispatch
+### multiple dispatch
 
+Julia is quasi-object-oriented:
+- new types can be defined
+- types have fields
+- but types do *not* have methods: functions have multiple methods instead
+
+Julia uses the type of the arguments to infer which method to run:
+**multiple dispatch**
+- more flexible: dispatches based on all arguments, not just the first
 - makes it really [fast](https://julialang.org/benchmarks/)
 - rare need to declare input types:
 
 ```julia
-function addone(x::Number)
-  return x+1
-end
-methods(addone)
-addone(3.5)
-addone([1 2; 6 7]) # error
-addone.([1 2; 6 7])
+add1(x::Integer) = x+1 # for Int64, Int32, Int8, UInt8, Bool, etc.
+add1(x::AbstractFloat) = x + 1.0 # for Float64, Float32, etc.
+methods(add1)
+add1(3.5) # dispatched to add1(::AbstractFloat)
+add1(1)   # dispatched to add1(::Integer)
+add1([1 2; 6 7])  # error: an Array is neither AbstractFloat nor Integer
+add1.([1 2; 6 7]) # vectorized. each one dispatched to add1(::Integer)
 ```
 
 better and no penalty because different
@@ -204,18 +209,39 @@ function addone(x) # no type declaration. re-defining
   return x+one(x)  # one(x) = identity element for * of same type as x
 end
 methods(addone)
+code_llvm(addone, (Int,))
+code_llvm(addone, (Float64,))
 addone(3.5)
 addone([1 1; 1 1])  # matrix-wise operation
 addone.([1 1; 1 1]) # element-wise operation
 
-function addone(x::String)
-  return x * " one"
-end
-methods(addone)
+addone(x::String) = x * " one"
+methods(addone) # 2 methods now
 addone("take")
 "take" * one("take")  # the go-to method is not used
 one("take") # identity for * on strings is empty string "", not "one"
 addone.(["take","make","share"])
+```
+
+awesome example of using multiple dispatch with custom types
+[here](https://www.juliabloggers.com/rock-paper-scissors-game-in-less-than-10-lines-of-code/)
+with code reprocuded below
+--but click the link for an excellent dissection of the code.  
+note: complete absence of *any* `if` to play rock-paper-scisors.
+
+```julia
+abstract type Shape end
+struct Rock     <: Shape end
+struct Paper    <: Shape end
+struct Scissors <: Shape end
+play(::Type{Paper}, ::Type{Rock})     = "Paper wins"
+play(::Type{Paper}, ::Type{Scissors}) = "Scissors wins"
+play(::Type{Rock},  ::Type{Scissors}) = "Rock wins"
+play(::Type{T},     ::Type{T}) where {T<: Shape} = "Tie, try again"
+play(a::Type{<:Shape}, b::Type{<:Shape}) = play(b, a) # Commutativity
+
+# now let's play:
+play(Rock, Paper) # "Paper wins"
 ```
 
 ### view source code
@@ -226,13 +252,16 @@ tuple of Types
 
 ```julia
 methods(sort)
+sort(10_000_000:-2:1)
+sort([5,1,2])
+
 less(sort, (AbstractArray{Int,1},)) # function name, tuple of argument types
 @less sort([7,2,8]) # same result as above
 ```
 
 This last line opens the viewer "less" to view the file where
 the code is defined, for the particular function on the particular types
-of input. also shows file name & path.
+of input. So: type `q` to quit. Also shows file name & path.
 
 ```julia
 typeof(10:-1:1)

@@ -50,10 +50,8 @@ def startswithi(str):
     """Return True if the input string starts with 'i', False otherwise.
     Require that the "re" was imported beforehand.
 
-    notes:
+    note:
     - the double and single quotes inside my tripe double-quoted docstring
-    - in my text here the indentation adds 4 spaces on each line.
-      Those are ignored because it's a triple set of quotes.
 
     Example:
 
@@ -127,83 +125,6 @@ def detect_problems(filename):
 analyze_all()
 ```
 
-## in-class exercise: binomial coefficients
-
-learning goals (recall [best practices](notes0906-bestpractices.html)):
-
-- write functions, divide a large problem into smaller problems
-- use optional arguments and default argument values
-- use loops and `if` statements
-- use docstring to document functions
-- check for assumptions
-- test code automatically
-- create a module: use the script to be run on the command line, or as a module
-
-Calculating binomial coefficients is not easy numerically.
-The number of ways to choose k elements among n is
-`choose(n,k) = n! / (k! (n-k)!)`
-where factorial n: `n! = 1*2*...*n` becomes very big very fast.
-But many terms cancel each other in "n choose k",
-and it is a lot easier numerically to calculate the log factorial:
-`log(n!) = log(1) + ... + log(n)`.
-
-1. Write a function "logfactorial" that calculates
-   `log(n!)` for any integer `n>0`.  
-   Hint: use `math.log()` to calculate the log of a single value,
-   and use a loop to iterate over `i` and get the `log(i)` values.
-2. Add a *docstring*
-3. Add *checks* on the input `n` (should be an integer, and non-negative):
-   use `assert` statements for this
-4. Add *tests* as examples inside the docstring.
-   For the tests to be used, add a section using the **doctest** module.
-   Check that you can run the checks with `./binomial.py --test`
-5. Add an *optional argument* `k` to calculate
-   `log(n!/k!) = log((k+1)*...*n) = log(k+1) + ... + log(n)`,
-   with default `k=0`.
-   Return log(1)=0 if k>n, with no error (it's a sum of 0 terms).
-6. Add a *check* that `k` is a non-negative integer
-7. Add examples to test the function with a non-default `k`, for instance:
-   with n=5 and some k<5, also n=k=5 (boundary), and n=5, k=6.
-8. Write a function "choose" to calculate the log of the binomial
-   `log(choose(n,k))` for any integers `n>=0` and `0 <= k <= n`.
-   Start with the docstring and with a test.
-   Recall that `choose(n,k) = n!/(k! (n-k)!)`, so
-   `log(choose(n,k)) = log(n!/k!) - log((n-k)!)`
-   and you can use the function from step 5 twice.
-9. Add an optional argument to this `choose` function,
-   to return either the binomial coefficient itself (as an integer)
-   or its log (as a `float`).
-   Make the function return the binomial coefficient by default, not its log.
-10. Add a docstring for the module itself
-11. Add *arguments* for the script itself:
-    - `-n` and `-k` values, no defaults: to get the binomial coefficient "n choose k"
-    - `--log` option: to get the log of the binomial coefficient
-    - `--test` option: to test the package instead of calculating one particular
-      coefficient value. should be incompatible with n, k, log options.
-    At the end, you should be able to run it like this
-    for instance: `./binomial.py -n 100 -k 30` or
-    `./binomial.py -n 1000 -k 300 --log`. example output:
-
-```
-$ ./binomial.py -n 150 -k 40
-4408904561911885789946649584764715008
-$ ./binomial.py -n 1500 -k 400 --log
-866.1129352492226
-$ ./binomial.py --help
-usage: binomial.py [-h] [-n N] [-k K] [-l] [--test]
-
-optional arguments:
-  -h, --help  show this help message and exit
-  -n N        total number of items to choose from
-  -k K        number of items to choose
-  -l, --log   returns the log binomial coefficient
-  --test      tests the module and quits
-
-$ ./binomial.py --test
-testing the module...
-done with tests
-```
-
 ## python scripts
 
 - to use functions in a script `binomial.py` inside a python session
@@ -212,7 +133,14 @@ done with tests
   `import binomial`
 
   then use function `foo` as `binomial.foo()`, `help(binomial)`, etc.
-  If your script in not in the directory that python is in,
+  alternatively, do:
+
+  `from binomial import *`
+
+  and then use function `foo` as just `foo` (with no need to type
+  the file name first).
+
+- If your script in not in the directory that your python session is in,
   add the script path to the list of paths that python knows about:
   `import sys` then `sys.path.append("path/to/script")`.
 

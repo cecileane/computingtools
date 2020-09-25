@@ -19,6 +19,7 @@ useful functions on **strings** for simple things:
  `.strip`, `.split`, `.join`, `.replace`, `.index`, `.find`, `.count`,
  `startswith`, `.endswith`, `.upper`, `.lower`,
 
+
 ```python
 a = "hello world"
 print(a.startswith("h"))
@@ -31,8 +32,6 @@ print("lo w" in a)
 ```python
 print("aha".find("a"))
 print("hohoho".find("oh"))
-mylist = ["AA","BB","CC"]
-"coolsep".join(mylist)
 ```
 
 and see `dir("")` for string methods (because `""` is a string).
