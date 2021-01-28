@@ -42,6 +42,7 @@ Resources
   git/github, make, perl, and more.
 - [Bioinformatics Data Skills](http://shop.oreilly.com/product/0636920030157.do) by Vince Buffalo
 - Courses on the similar topic:
+  ['Statistical Computing' @ CMU by Alex Reinhart and Christopher Genovese](https://36-750.github.io),
   [Jenny Bryan's STAT 545](https://stat545.com),
   [UW/Fred Hutch MCB 536](https://github.com/fredhutchio/tfcb_2020),
   [EEOB/BCB 546X at Iowa State University](https://eeob-biodata.github.io/EEOB-BCB-546X/)
